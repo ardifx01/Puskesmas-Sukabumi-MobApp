@@ -12,12 +12,12 @@ import {
 } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
-import { isLoaded, useFonts } from "expo-font";
+// import { isLoaded, useFonts } from "expo-font";
 import SvgUri from "expo-svg-uri";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
 const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+// const windowHeight = Dimensions.get("window").height;
 
 export default function HomeScreen({route}) {
   const dummyArray = Array(3).fill(null);

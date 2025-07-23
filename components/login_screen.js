@@ -18,11 +18,7 @@ const windowHeight = Dimensions.get("window").height;
 
 export default function LoginScreens() {
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const { control, handleSubmit, formState: { errors },} = useForm({
     defaultValues: {
       usrnm: "",
       pwd: "",
@@ -58,10 +54,10 @@ export default function LoginScreens() {
                 render={({ field: { onChange, onBlur, value } }) => (
                   <TextInput
                     placeholder="Masukkan Username"
-                    onBlur= {onBlur}
+                    onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
-                  />  
+                  />
                 )}
                 name="usrnm"
               />
@@ -117,7 +113,7 @@ const styles = StyleSheet.create({
     marginBlockStart: 80,
   },
   titleText: {
-    fontFamily:"HelveticaNeue-Bold",
+    fontFamily: "HelveticaNeue-Bold",
     fontWeight: 700,
     fontSize: 28,
 
