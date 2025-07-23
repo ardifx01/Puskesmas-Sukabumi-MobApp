@@ -19,8 +19,9 @@ import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-export default function HomeScreen() {
+export default function HomeScreen({route}) {
   const dummyArray = Array(3).fill(null);
+  console.log(route.name)
 
   return (
     <ImageBackground

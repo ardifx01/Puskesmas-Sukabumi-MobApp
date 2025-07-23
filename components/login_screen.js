@@ -12,41 +12,11 @@ import {
 } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
-import { useFonts } from "expo-font";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function LoginScreens() {
-  // const [customFontsLoaded] = useFonts({
-  //   // still not working
-  //   HelveticaNeueBold: require("../assets/font/HelveticaNeue/HelveticaNeueBold.otf"),
-  //   HelveticaNeue: require("../assets/font/HelveticaNeue/HelveticaNeueItalic.ttf"),
-  // });
-
-  // const [loaded, error] = useFonts({
-  //   'HelveticaNeue': require("../assets/fonts/HelveticaNeue/HelveticaNeueMedium.otf"),
-  //   'HelveticaNeue-Light': require("../assets/fonts/HelveticaNeue/HelveticaNeueLight.otf"),
-  //   'HelveticaNeue-Bold': require("../assets/fonts/HelveticaNeue/HelveticaNeueBold.otf")
-  // });
-
-  //  useEffect(() => {
-  //   if (loaded || error) {
-  //   }
-  // }, [loaded, error]);
-
-
-  // // const {
-  // //   handleSubmit,
-  // //   formState: { errors },
-  // // } = useForm();
-  // // const [submittedData, setSubmittedData] = useState(null);
-
-  // // const onSubmit = (data) => {
-  // //   // Simulate form submission
-  // //   console.log("Submitted Data:", data);
-  // //   setSubmittedData(data);
-  // // };
 
   const {
     control,
@@ -157,6 +127,7 @@ const styles = StyleSheet.create({
     fontFamily: "HelveticaNeue-Light",
     fontWeight: 300,
     fontSize: 16,
+    lineHeight: 18,
   },
   loginForm: {
     flex: 1,
