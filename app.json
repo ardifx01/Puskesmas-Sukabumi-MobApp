@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "my-app",
-    "slug": "my-app",
+    "name": "Puskesmas-Sukabumi-MobApp",
+    "slug": "Puskesmas-Sukabumi-MobApp",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -20,10 +20,98 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.anonymous.PuskesmasSukabumiMobApp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      "expo-router",
+      "expo-font"
+      // [
+      //   "expo-font",
+      //   {
+      //     "android": {
+      //       "fonts": [
+      //         {
+      //           "fontFamily": "Helvetica Neue",
+      //           "fontDefinitions": [
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_100.otf",
+      //               "weight": 100
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_200.otf",
+      //               "weight": 200
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_300.otf",
+      //               "weight": 300
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_400.otf",
+      //               "weight": 400
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_500.otf",
+      //               "weight": 500
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_700.otf",
+      //               "weight": 700
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_800.otf",
+      //               "weight": 800
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_900.otf",
+      //               "weight": 900
+      //             }
+      //           ]
+      //         },
+      //         {
+      //           "fontFamily": "Helvetica Neue Italic",
+      //           "fontDefinitions": [
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_100Italic.otf",
+      //               "weight": 100
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_200Italic.otf",
+      //               "weight": 200
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_300Italic.otf",
+      //               "weight": 300
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_400Italic.ttf",
+      //               "weight": 400
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_500Italic.otf",
+      //               "weight": 500
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_700Italic.otf",
+      //               "weight": 700
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_800Italic.otf",
+      //               "weight": 800
+      //             },
+      //             {
+      //               "path": "./assets/fonts/HelveticaNeue/HelveticaNeue_900Italic.otf",
+      //               "weight": 900
+      //             }
+      //           ]
+      //         }
+      //       ]
+      //     }
+      //   }
+      // ]
+    ]
   }
 }
