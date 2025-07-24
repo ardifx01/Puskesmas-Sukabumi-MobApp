@@ -59,17 +59,17 @@ const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
 const PatientDataItem = ({ item, onPress, backgroundColor, textColor, iconColor }) => (
   <Pressable style={[styles.patientDataButton]} onPress={onPress}>
     <View>
-      <Text style={[styles.boldText, { fontSize: 16 }]}>
+      <Text style={[styles.normalText, { fontSize: 20 }]}>
         Nama Pasien
       </Text>
       <View
         style={[{ flexDirection: "row", alignItems: "center" }]}
       >
-        <Text style={[styles.smallText]}>Laki-laki</Text>
+        <Text style={[styles.normalText, {fontSize: 16}]}>Laki-laki</Text>
         <Text style={{ fontSize: 20, marginInline: 3.5 }}>
           •
         </Text>
-        <Text style={[styles.smallText]}>20th</Text>
+        <Text style={[styles.normalText, {fontSize: 16}]}>20th</Text>
       </View>
     </View>
 
@@ -83,7 +83,7 @@ const PatientDataItem = ({ item, onPress, backgroundColor, textColor, iconColor 
       <View
         style={[{ flexDirection: "row", alignItems: "center" }]}
       >
-        <Text style={[styles.italicText]}>Diagnosa: {diseaseName}</Text>
+        <Text style={[styles.italicText, {fontSize: 18}]}>Diagnosa: {diseaseName}</Text>
       </View>
 
       <View
@@ -93,7 +93,7 @@ const PatientDataItem = ({ item, onPress, backgroundColor, textColor, iconColor 
           <FontAwesome5 name="calendar-alt" color="#BBBBBB" />
         </View>
         <View>
-          <Text style={styles.smallText}>21 Juli 2025</Text>
+          <Text style={[styles.normalText, {fontSize: 16}]}>21 Juli 2025</Text>
         </View>
       </View>
       
@@ -103,7 +103,7 @@ const PatientDataItem = ({ item, onPress, backgroundColor, textColor, iconColor 
 
 export default function HistoryScreen({ route }) {
   const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index + 1}` }));
-  console.log(route.name);
+  console.log(windowHeight, windowWidth);
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
 
     borderWidth: 1,
     borderRadius: 12,
-    borderColor: "#BBBBBB",
+    borderColor: "#EDEDED",
 
 
     backgroundColor: "#FFFFFF",
