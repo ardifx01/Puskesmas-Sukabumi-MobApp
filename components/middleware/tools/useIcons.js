@@ -1,6 +1,7 @@
 import React from 'react';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Octicons from '@expo/vector-icons/Octicons';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { SvgUri } from 'expo-svg-uri';
 
 const CUSTOM_SVG_URI_MAP = {
@@ -9,7 +10,9 @@ const CUSTOM_SVG_URI_MAP = {
 
 const ICON_SETS = {
   FontAwesome6: FontAwesome6,
+  FontAwesome: FontAwesome,
   Octicons: Octicons,
+  
 };
 
 /**
