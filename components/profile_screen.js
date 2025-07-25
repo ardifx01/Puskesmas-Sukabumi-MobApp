@@ -21,8 +21,6 @@ import UseIcons from "./middleware/tools/useIcons";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const diseaseName = "TBC";
-
 export default function ProfileScreen({ route }) {
   
   return (
@@ -55,14 +53,52 @@ export default function ProfileScreen({ route }) {
                 <Text style={[styles.medText, {fontSize: 24, color: "#fff", marginBlockEnd: 4,}]}>Keqing</Text>
                 <Text style={[styles.normalText, {color: "#fff", fontSize: 16}]}>Tenaga Kesehatan</Text>
               </View>
-
             </View>
           </View>
 
-          <View style={[styles.contentContainer, styles.lowerContent]}>
-            <View>
+          <View style={[styles.lowerContent]}>
+            <View style={[styles.contentContainer, {gap: 24}]}>
+              <View>
+                <Text style={styles.formTextTitle}>NIK</Text>
+                <View style={styles.informationForm}>
+                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                </View>
+              </View>
 
+              <View>
+                <Text style={styles.formTextTitle}>Jenis Kelamin</Text>
+                <View style={styles.informationForm}>
+                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                </View>
+              </View>
+
+              <View>
+                <Text style={styles.formTextTitle}>Umur</Text>
+                <View style={styles.informationForm}>
+                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                </View>
+              </View>
+
+              <View>
+                <Text style={styles.formTextTitle}>Alamat</Text>
+                <View style={styles.informationForm}>
+                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                </View>
+              </View>
+              
             </View>
+
+            <View style={[styles.contentContainer, {flex: 1, alignItems: "center", flexDirection: "column", justifyContent: "flex-end"}]}>
+              <TouchableOpacity style={[styles.logoutButton]}>
+                <Text style={[styles.medText, {color: "#4ACDD1", fontSize: 18}]}>Log Out</Text>
+                <UseIcons name="arrow-right" set="FontAwesome6" size={18} color="#4ACDD1"/>
+              </TouchableOpacity>
+            </View>
+
           </View>
 
           <StatusBar style="auto" />
@@ -117,6 +153,11 @@ const styles = StyleSheet.create({
     marginBlockStart: 8,
     paddingInlineEnd: 100,
   },
+  formTextTitle: {
+    fontFamily: "HelveticaNeue-Light",
+    fontSize: 14,
+    color: "#616161",
+  },
   normalText: {
     fontFamily: "HelveticaNeue-Light",
   },
@@ -151,15 +192,43 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   lowerContent: {
-    flex: 1.6,
+    flex: 1.8,
 
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
 
-    paddingInline: 18,
     paddingBlockStart: 24,
-    paddingBlockEnd: 120,
+    paddingBlockEnd: 80,
 
     backgroundColor: "#FFF",
+  },
+  informationForm: {
+    borderBottomWidth: 0.4,
+    borderBlockEndColor: "#333333",
+  
+    paddingBlockStart: 18.5,
+    paddingBlockEnd: 14.5,
+
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+  },
+  logoutButton: {
+    
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 35,
+
+    paddingInline: 24,
+    paddingBlock: 18,
+
+    borderWidth: 1,
+    borderColor: "#EDEDED",
+    borderRadius: 14,
+
+
+
+    backgroundColor: "#FFFFFF",
+    
   },
 });
