@@ -9,6 +9,8 @@ import { isLoaded, useFonts } from 'expo-font';
 
 import LoginScreens from "./components/login_screen";
 import AppTabs from "./components/tabs";
+import DetailPatient from "./components/screenComponents/historyScreen/detailPatient_screen";
+
 
 var isSignedIn = true;
 const Stack = createNativeStackNavigator();
@@ -46,10 +48,12 @@ export default function App() {
       <NavigationContainer >
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           {isSignedIn ? (
-            <Stack.Screen
-              name="main"
-              component={AppTabs}
-            />
+            <>
+            <Stack.Screen name="main" component={AppTabs}/>
+            <Stack.Screen name="detail-patient" component={DetailPatient}/>
+            </>
+
+            
           ) : (
             <Stack.Screen
               name="login"
