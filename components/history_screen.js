@@ -200,7 +200,7 @@ export default function HistoryScreen({ route }) {
                 keyExtractor={(item) => item.id}
                 extraData={selectedFilter}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 12 }}
+                contentContainerStyle={{ gap: 12, paddingBlockEnd: 120}}
               />
             </View>
 
@@ -266,9 +266,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   lowerContent: {
-    flex: 3.99,
+    flex: 5,
     paddingBlockStart: 18.14,
-    paddingBlockEnd: 120,
   },
   searchBox: {
     width: "100%",
