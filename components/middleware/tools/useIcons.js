@@ -1,8 +1,14 @@
 import React from 'react';
+
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Octicons from '@expo/vector-icons/Octicons';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { SvgUri } from 'expo-svg-uri';
+
+// Local SVG Assets
+import datePickerIco from "../../../assets/icons/datePicker_ico.svg";
+import historyIco from "../../../assets/icons/history_ico.svg";
+import patientIco from "../../../assets/icons/patientCount_ico.svg";
+import stetoscopIco from "../../../assets/icons/stetoscop_ico.svg";
 
 const CUSTOM_SVG_URI_MAP = {
   'history': '../../../assets/history_ico.svg',
@@ -13,6 +19,13 @@ const ICON_SETS = {
   FontAwesome: FontAwesome,
   Octicons: Octicons,
   
+};
+
+const CUSTOM_SVG = {
+  'datePicker': datePickerIco,
+  'history': historyIco,
+  'patientCount': patientIco,
+  'stetoscop': stetoscopIco,
 };
 
 /**
@@ -41,6 +54,16 @@ const UseIcons = ({ name, set, size = 24, color = "black", style, ...rest }) => 
 //       return null;
 //     }
 //   }
+
+  if (set === 'Custom') {
+    const CustomIcoComponent = CUSTOM_SVG[name];
+    if (CustomIcoComponent) {
+      return <CustomIcoComponent width={size} height={size} stroke={color} style={style} {...rest} />;
+    } else {
+      console.warn(`Ikon SVG kustom '${name}' tidak ditemukan.`);
+      return null;
+    };
+  };
 
   const IconComponent = ICON_SETS[set];
 
