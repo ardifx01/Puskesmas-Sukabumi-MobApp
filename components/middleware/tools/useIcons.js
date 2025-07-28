@@ -1,24 +1,27 @@
 import React from 'react';
 
+// Expo vector icons
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Octicons from '@expo/vector-icons/Octicons';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 
 // Local SVG Assets
 import datePickerIco from "../../../assets/icons/datePicker_ico.svg";
 import historyIco from "../../../assets/icons/history_ico.svg";
 import patientIco from "../../../assets/icons/patientCount_ico.svg";
 import stetoscopIco from "../../../assets/icons/stetoscop_ico.svg";
-
-const CUSTOM_SVG_URI_MAP = {
-  'history': '../../../assets/history_ico.svg',
-};
+import calendarDate from "../../../assets/icons/calendarDate_ico.svg";
+import userId from "../../../assets/icons/user-id.svg";
+import mapMarker from "../../../assets/icons/map-marker-outline.svg";
 
 const ICON_SETS = {
-  FontAwesome6: FontAwesome6,
   FontAwesome: FontAwesome,
+  FontAwesome6: FontAwesome6,
+  FontAwesome5: FontAwesome5,
   Octicons: Octicons,
-  
+  SimpleLineIcons: SimpleLineIcons,
 };
 
 const CUSTOM_SVG = {
@@ -26,6 +29,9 @@ const CUSTOM_SVG = {
   'history': historyIco,
   'patientCount': patientIco,
   'stetoscop': stetoscopIco,
+  'calendarDate': calendarDate,
+  'userId': userId,
+  "map-marker": mapMarker
 };
 
 /**
@@ -39,31 +45,24 @@ const CUSTOM_SVG = {
  * @param {object} props.style - Gaya tambahan untuk ikon.
  */
 
-const UseIcons = ({ name, set, size = 24, color = "black", style, ...rest }) => {
-    
-//   if (set === 'Custom') { STILL NOT WORKING
-//     const svgUri = CUSTOM_SVG_URI_MAP[name];
-//     console.log(svgUri)
+const UseIcons = ({ name, set, size = 24, color = "black", fillColor = "none", style, ...rest }) => {
 
-//     if (svgUri) {
-//       return (
-//         console.log("Cihuyy")
-//       );
-//     } else {
-//       console.warn(`Icon '${name}' dengan set 'CustomSVG' tidak ditemukan.`);
-//       return null;
-//     }
-//   }
+  // if (name == "map-marker") {
+  //   const MdiIconPath = MDI_ICON_SETS[name];
+  //   console.log(`mdi-path MDIIconPath: ${MdiIconPath}, with name: ${name}`);
+  // }
+
 
   if (set === 'Custom') {
     const CustomIcoComponent = CUSTOM_SVG[name];
     if (CustomIcoComponent) {
-      return <CustomIcoComponent width={size} height={size} stroke={color} style={style} {...rest} />;
+      return <CustomIcoComponent width={size} height={size} stroke={color} fill={fillColor} style={style}  {...rest} />;
     } else {
       console.warn(`Ikon SVG kustom '${name}' tidak ditemukan.`);
       return null;
     };
   };
+
 
   const IconComponent = ICON_SETS[set];
 

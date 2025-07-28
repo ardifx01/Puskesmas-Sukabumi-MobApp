@@ -61,7 +61,7 @@ export default function ProfileScreen({ route }) {
               <View>
                 <Text style={styles.formTextTitle}>NIK</Text>
                 <View style={styles.informationForm}>
-                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                  <UseIcons name="userId" set="Custom" size={22} color="none" fillColor="#bbbbbb"/>
                   <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
                 </View>
               </View>
@@ -69,7 +69,7 @@ export default function ProfileScreen({ route }) {
               <View>
                 <Text style={styles.formTextTitle}>Jenis Kelamin</Text>
                 <View style={styles.informationForm}>
-                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                   <UseIcons name="user" set="FontAwesome5" size={22} color="#bbbbbb"/>
                   <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
                 </View>
               </View>
@@ -77,7 +77,7 @@ export default function ProfileScreen({ route }) {
               <View>
                 <Text style={styles.formTextTitle}>Umur</Text>
                 <View style={styles.informationForm}>
-                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                  <UseIcons name="calendarDate" set="Custom" size={22} color="#bbbbbb"/>
                   <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
                 </View>
               </View>
@@ -85,7 +85,7 @@ export default function ProfileScreen({ route }) {
               <View>
                 <Text style={styles.formTextTitle}>Alamat</Text>
                 <View style={styles.informationForm}>
-                  <View style={{width: 22, height: 15.5, backgroundColor: "gray", borderRadius: 5}}></View>
+                  <UseIcons name="map-marker" set="Custom" size={22} color="none" fillColor="#bbbbbb"/>
                   <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
                 </View>
               </View>

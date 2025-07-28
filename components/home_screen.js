@@ -16,6 +16,9 @@ import { StatusBar } from "expo-status-bar";
 import SvgUri from "expo-svg-uri";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
+import UseIcons from "./middleware/tools/useIcons";
+
+
 const windowWidth = Dimensions.get("window").width;
 // const windowHeight = Dimensions.get("window").height;
 
@@ -67,24 +70,27 @@ export default function HomeScreen({route}) {
 
                 <View style={styles.statDetail}>
                   <View style={styles.patientCountWrapper}>
-                    <Text style={styles.smallText}>Total Pasien</Text>
-                    <View style={styles.patientCount}>
-                      <SvgUri
-                        
-                        width={20}
-                        height={24}
-                        source={require("../assets/patientCount_ico.svg")}
-                        fill="red"
-                      />
-                      <Text
-                        style={[
-                          styles.boldText,
-                          { color: "#4ACDD1", fontSize: 22 },
-                        ]}
-                      >
-                        23
-                      </Text>
+                    <View style={{alignContent: "center"}}>
+                      <Text style={styles.smallText}>Total Pasien</Text>
+                      <View style={styles.patientCount}>
+                        <UseIcons
+                          name="patientCount"
+                          set="Custom"
+                          size={20}
+                          color="#4ACDD1"
+                          style={{marginInlineStart: -5}}
+                        />
+                        <Text
+                          style={[
+                            styles.boldText,
+                            { color: "#4ACDD1", fontSize: 22 },
+                          ]}
+                        >
+                          23
+                        </Text>
+                      </View>
                     </View>
+
                   </View>
                   <View style={styles.datePickerWrapper}>
                     <View style={styles.datePicker}>
@@ -131,7 +137,12 @@ export default function HomeScreen({route}) {
                           styles.datePickerInActive,
                         ]}
                       >
-                        <FontAwesome5 name="calendar-alt" color="#4ACDD1" />
+                        <UseIcons
+                          name="calendar-alt"
+                          set="FontAwesome5"
+                          size={12}
+                          color="#4ACDD1"
+                        />
                       </Pressable>
                     </View>
                     <Text
@@ -161,10 +172,11 @@ export default function HomeScreen({route}) {
                   ]}
                 >
                   <View style={[styles.iconFitting]}>
-                    <SvgUri
-                      width={20}
-                      height={20}
-                      source={require("../assets/stetoscop_ico.svg")}
+                    <UseIcons
+                      name="stetoscop"
+                      set="Custom"
+                      size={20}
+                      color="none"
                     />
                   </View>
                   <Text
@@ -348,8 +360,8 @@ const styles = StyleSheet.create({
   },
   patientCount: {
     flexDirection: "row",
-    justifyContent: "center",
-    marginBlockStart: 4,
+    justifyContent: "space-evenly",
+    alignItems: "center",
   },
   datePicker: {
     flexDirection: "row",

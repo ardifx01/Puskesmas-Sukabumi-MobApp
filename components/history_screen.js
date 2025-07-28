@@ -12,11 +12,10 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { useNavigation } from "expo-router";
 
 import { StatusBar } from "expo-status-bar";
 // import { isLoaded, useFonts } from "expo-font";
-import SvgUri from "expo-svg-uri";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
 import UseIcons from "./middleware/tools/useIcons";
 
@@ -24,7 +23,7 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const filterData = [
-  { id: "0", filterName: "filter-alt" },
+  { id: "0", filterName: "equalizer" },
   { id: "1", filterName: "Semua" },
   { id: "2", filterName: "Terbaru" },
   { id: "3", filterName: "Laki-laki" },
@@ -34,14 +33,17 @@ const filterData = [
 const diseaseName = "TBC";
 // component for filterData item
 const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
-  item.filterName === "filter-alt" ? ( // will change to icon later
+  item.filterName === "equalizer" ? ( // will change to icon later
     <Pressable
       onPress={onPress}
       style={[styles.filterButton, { backgroundColor: backgroundColor }]}
     >
-      <Text style={[styles.medText, { fontSize: 16 }, { color: textColor }]}>
-        {item.filterName}
-      </Text>
+      <UseIcons
+        name="equalizer"
+        set="SimpleLineIcons"
+        size={17}
+        color={textColor}
+      />
     </Pressable>
   ) : (
     <Pressable
@@ -90,7 +92,12 @@ const PatientDataItem = ({ item, onPress, backgroundColor, textColor, iconColor 
         style={{ flexDirection: "row", alignItems: "center" }}
       >
         <View style={{ marginInlineEnd: 10 }}>
-          <FontAwesome5 name="calendar-alt" color="#BBBBBB" />
+          <UseIcons
+            name="calendar-alt"
+            set="FontAwesome5"
+            size={12}
+            color="#BBBBBB" 
+          />
         </View>
         <View>
           <Text style={[styles.normalText, {fontSize: 16}]}>21 Juli 2025</Text>
@@ -101,7 +108,10 @@ const PatientDataItem = ({ item, onPress, backgroundColor, textColor, iconColor 
   </Pressable>
 );
 
+
+
 export default function HistoryScreen({ route }) {
+  const navigation = useNavigation();
   const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index + 1}` }));
   console.log(windowHeight, windowWidth);
 
@@ -127,7 +137,9 @@ export default function HistoryScreen({ route }) {
     return (
       <PatientDataItem
         item={item}
-        onPress={() => console.log("Pressed")}
+        onPress={() => {
+          navigation.navigate("detail-patient");
+        }}
         backgroundColor="#fff"
         textColor="#000"
         iconColor="#BBBBBB"
