@@ -47,12 +47,6 @@ const CUSTOM_SVG = {
 
 const UseIcons = ({ name, set, size = 24, color = "black", fillColor = "none", style, ...rest }) => {
 
-  // if (name == "map-marker") {
-  //   const MdiIconPath = MDI_ICON_SETS[name];
-  //   console.log(`mdi-path MDIIconPath: ${MdiIconPath}, with name: ${name}`);
-  // }
-
-
   if (set === 'Custom') {
     const CustomIcoComponent = CUSTOM_SVG[name];
     if (CustomIcoComponent) {
