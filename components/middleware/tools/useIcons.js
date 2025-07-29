@@ -6,6 +6,7 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Octicons from '@expo/vector-icons/Octicons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
+import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 
 // Local SVG Assets
 import datePickerIco from "../../../assets/icons/datePicker_ico.svg";
@@ -22,6 +23,7 @@ const ICON_SETS = {
   FontAwesome5: FontAwesome5,
   Octicons: Octicons,
   SimpleLineIcons: SimpleLineIcons,
+  MaterialIcons: MaterialIcons,
 };
 
 const CUSTOM_SVG = {
