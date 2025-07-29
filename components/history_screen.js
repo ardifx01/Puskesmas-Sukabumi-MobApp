@@ -33,7 +33,7 @@ const filterData = [
 const diseaseName = "TBC";
 // component for filterData item
 const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
-  item.filterName === "equalizer" ? ( // will change to icon later
+  item.filterName === "equalizer" ? (
     <Pressable
       onPress={onPress}
       style={[styles.filterButton, { backgroundColor: backgroundColor }]}
@@ -58,11 +58,11 @@ const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
 );
 
   // Component for PatientDataItem
-const PatientDataItem = ({ item, onPress, backgroundColor, textColor, iconColor }) => (
+const PatientDataItem = ({ item, onPress, }) => (
   <Pressable style={[styles.patientDataButton]} onPress={onPress}>
     <View>
       <Text style={[styles.normalText, { fontSize: 20 }]}>
-        Nama Pasien
+        {item.id}
       </Text>
       <View
         style={[{ flexDirection: "row", alignItems: "center" }]}
