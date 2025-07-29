@@ -12,7 +12,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import Collapsible from 'react-native-collapsible';
+import Collapsible from "react-native-collapsible";
 
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -23,166 +23,214 @@ import UseIcons from "../../middleware/tools/useIcons";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+// Component for Accordion
 const AccordionItem = ({ title, content, initialCollapsed = true }) => {
   const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
   };
-
   return (
+    <View style={{ marginBlockStart: 4 }}>
+      <Pressable
+        onPress={toggleCollapse}
+        style={{
+          alignContent: "center",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={[styles.normalText, { fontSize: 18 }]}>{title}</Text>
+        <UseIcons
+          name={isCollapsed ? "arrow-right" : "arrow-drop-down"}
+          set="MaterialIcons"
+          color="#616161"
+        />
+      </Pressable>
 
-          <View style={{marginBlockStart: 4}}>
-            <Pressable onPress={toggleCollapse} style={{alignContent: "center", flexDirection:"row", justifyContent: "space-between"}}>
-              <Text style={[styles.normalText, {fontSize: 18}]}>{title}</Text>
-              <UseIcons
-                name={isCollapsed ? "arrow-right" : "arrow-drop-down"}
-                set="MaterialIcons"
-                color="#616161"
-              />
-            </Pressable>
-
-            <Collapsible collapsed={isCollapsed}>
-              <View style={styles.itemContent}>
-                {content}
-              </View>
-            </Collapsible>
-          </View>
+      <Collapsible collapsed={isCollapsed}>
+        <View style={styles.itemContent}>{content}</View>
+      </Collapsible>
+    </View>
   );
 };
 
+// Component for Kusuri Recipe List
+const DaftarResepObat = () => {
+  return (
+    <View style={{ gap: 12, marginBlockStart: 32 }}>
+      <View style={styles.obatItem}>
+        <View>
+          <Text style={[styles.normalText, { fontSize: 20 }]}>Paracetamol</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
+            <Text style={[styles.normalText, { fontSize: 16 }]}>Kapsul</Text>
+            <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
+            <Text style={[styles.normalText, { fontSize: 16 }]}>
+              Antibiotik
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.normalText, { fontSize: 20, color: "#616161" }]}>
+          2
+        </Text>
+      </View>
+      <View style={styles.obatItem}>
+        <View>
+          <Text style={[styles.normalText, { fontSize: 20 }]}>Paracetamol</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
+            <Text style={[styles.normalText, { fontSize: 16 }]}>Kapsul</Text>
+            <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
+            <Text style={[styles.normalText, { fontSize: 16 }]}>
+              Antibiotik
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.normalText, { fontSize: 20, color: "#616161" }]}>
+          2
+        </Text>
+      </View>
+      <View style={styles.obatItem}>
+        <View>
+          <Text style={[styles.normalText, { fontSize: 20 }]}>Paracetamol</Text>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
+            <Text style={[styles.normalText, { fontSize: 16 }]}>Kapsul</Text>
+            <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
+            <Text style={[styles.normalText, { fontSize: 16 }]}>
+              Antibiotik
+            </Text>
+          </View>
+        </View>
+
+        <Text style={[styles.normalText, { fontSize: 20, color: "#616161" }]}>
+          2
+        </Text>
+      </View>
+    </View>
+  );
+};
+
+// Default export
 export default function DetailPatientScreen({ route }) {
   const navigation = useNavigation();
   return (
-      <SafeAreaView style={{backgroundColor: "#F7F9FC"}}>
-        <View style={styles.container}>
-          <View style={[styles.upperContent]}>
-            <View style={styles.headerContainer}>
-              <Pressable 
-                style={[styles.actionCircleButton]}
-                onPress={() => navigation.goBack()}
+    <SafeAreaView style={{ backgroundColor: "#F7F9FC" }}>
+      <View style={styles.container}>
+        <View style={[styles.upperContent]}>
+          <View style={styles.headerContainer}>
+            <Pressable
+              style={[styles.actionCircleButton]}
+              onPress={() => navigation.goBack()}
+            >
+              <UseIcons
+                name="angle-left"
+                set="FontAwesome6"
+                size={20}
+                color="#4ACDD1"
+              />
+            </Pressable>
+            <View style={{ flex: 0.85, alignItems: "center" }}>
+              <Text style={[styles.headerTitle]}>Detail Pasien</Text>
+            </View>
+          </View>
+        </View>
+
+        <View style={[styles.lowerContent]}>
+          <View style={{ marginBlockEnd: 16 }}>
+            <Text style={[styles.medText, { fontSize: 24 }]}>
+              Aether Hikari
+            </Text>
+            <View style={[{ flexDirection: "row", alignItems: "center" }]}>
+              <Text style={[styles.normalText, { fontSize: 16 }]}>
+                Laki-laki
+              </Text>
+              <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
+              <Text style={[styles.normalText, { fontSize: 16 }]}>20th</Text>
+            </View>
+          </View>
+
+          <View>
+            <View style={[styles.detailData]}>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
               >
                 <UseIcons
-                  name="angle-left"
-                  set="FontAwesome6"
-                  size={20}
+                  name="calendar-alt"
+                  set="FontAwesome5"
+                  size={15}
                   color="#4ACDD1"
                 />
-              </Pressable>
-              <View style={{ flex: 0.85, alignItems: "center" }}>
-                <Text style={[styles.headerTitle]}>Detail Pasien</Text>
+
+                <View>
+                  <Text style={[styles.normalText, { fontSize: 18 }]}>
+                    21 Juli 2025
+                  </Text>
+                </View>
               </View>
-            </View>
 
-          </View>
-
-          <View style={[styles.lowerContent]}>
-            <View style={{marginBlockEnd: 16}}>
-              <Text style={[styles.medText, {fontSize: 24,}]}>Aether Hikari</Text>
-              <View style={[{ flexDirection: "row", alignItems: "center" }]}>
-                <Text style={[styles.normalText,{fontSize: 16}]}>Laki-laki</Text>
-                <Text style={{ fontSize: 20, marginInline: 3.5 }}>
-                  •
+              <View style={{ gap: 8 }}>
+                <Text style={[styles.normalText, { fontSize: 18 }]}>
+                  Pemeriksa :<Text style={[styles.medText]}> Dr. Keqing</Text>
                 </Text>
-                <Text style={[styles.normalText, {fontSize: 16}]}>20th</Text>
+                <Text style={[styles.normalText, { fontSize: 18 }]}>
+                  Keluhan :<Text style={[styles.medText]}> Demam, Pilek</Text>
+                </Text>
+                <Text style={[styles.normalText, { fontSize: 18 }]}>
+                  Diagnosa :<Text style={[styles.medText]}> TBC</Text>
+                </Text>
               </View>
+
+              <AccordionItem
+                title="Daftar Resep Obat"
+                content={DaftarResepObat()}
+              />
             </View>
 
-            <View>
-              <View style={[styles.detailData]}>
-                <View
-                  style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-                >
-                    <UseIcons
-                      name="calendar-alt"
-                      set="FontAwesome5"
-                      size={15}
-                      color="#4ACDD1" 
-                    />
-
-                  <View>
-                    <Text style={[styles.normalText, {fontSize: 18}]}>21 Juli 2025</Text>
-                  </View>
-                </View>
-
-                <View style={{gap: 8}}>
-                  <Text  style={[styles.normalText, {fontSize: 18}]}>
-                    Pemeriksa :
-                    <Text style={[styles.medText]}> Dr. Keqing</Text>
-                  </Text>
-                  <Text  style={[styles.normalText, {fontSize: 18}]}>
-                    Keluhan :
-                    <Text style={[styles.medText]}> Demam, Pilek</Text>
-                  </Text>
-                  <Text  style={[styles.normalText, {fontSize: 18}]}>
-                    Diagnosa :
-                    <Text style={[styles.medText]}> TBC</Text>
-                  </Text>
-                </View>
-
-                <AccordionItem 
-                  title="Daftar Resep Obat"
-                  content={
-                    <View>
-                      <Text style={styles.contentText}>Obat 1</Text>
-                      <Text style={styles.contentText}>Obat 2</Text>
-                      <Text style={styles.contentText}>Obat 3</Text>
-                    </View>
-                  }
+            <View style={[styles.detailData]}>
+              <View
+                style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+              >
+                <UseIcons
+                  name="calendar-alt"
+                  set="FontAwesome5"
+                  size={15}
+                  color="#4ACDD1"
                 />
+
+                <View>
+                  <Text style={[styles.normalText, { fontSize: 18 }]}>
+                    21 Juli 2025
+                  </Text>
+                </View>
               </View>
 
-              <View style={[styles.detailData]}>
-                <View
-                  style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-                >
-                    <UseIcons
-                      name="calendar-alt"
-                      set="FontAwesome5"
-                      size={15}
-                      color="#4ACDD1" 
-                    />
-
-                  <View>
-                    <Text style={[styles.normalText, {fontSize: 18}]}>21 Juli 2025</Text>
-                  </View>
-                </View>
-
-                <View style={{gap: 8}}>
-                  <Text  style={[styles.normalText, {fontSize: 18}]}>
-                    Pemeriksa :
-                    <Text style={[styles.medText]}> Dr. Keqing</Text>
-                  </Text>
-                  <Text  style={[styles.normalText, {fontSize: 18}]}>
-                    Keluhan :
-                    <Text style={[styles.medText]}> Demam, Pilek</Text>
-                  </Text>
-                  <Text  style={[styles.normalText, {fontSize: 18}]}>
-                    Diagnosa :
-                    <Text style={[styles.medText]}> TBC</Text>
-                  </Text>
-                </View>
-
-                <AccordionItem 
-                  title="Daftar Resep Obat"
-                  content={
-                    <View>
-                      <Text style={styles.contentText}>Obat 1</Text>
-                      <Text style={styles.contentText}>Obat 2</Text>
-                      <Text style={styles.contentText}>Obat 3</Text>
-                    </View>
-                  }
-                />
+              <View style={{ gap: 8 }}>
+                <Text style={[styles.normalText, { fontSize: 18 }]}>
+                  Pemeriksa :<Text style={[styles.medText]}> Dr. Keqing</Text>
+                </Text>
+                <Text style={[styles.normalText, { fontSize: 18 }]}>
+                  Keluhan :<Text style={[styles.medText]}> Demam, Pilek</Text>
+                </Text>
+                <Text style={[styles.normalText, { fontSize: 18 }]}>
+                  Diagnosa :<Text style={[styles.medText]}> TBC</Text>
+                </Text>
               </View>
+
+              <AccordionItem
+                title="Daftar Resep Obat"
+                content={DaftarResepObat()}
+              />
             </View>
-
-
-
           </View>
-
-          <StatusBar style="auto" />
         </View>
-      </SafeAreaView>
+
+        <StatusBar style="auto" />
+      </View>
+    </SafeAreaView>
   );
 }
 
@@ -242,8 +290,7 @@ const styles = StyleSheet.create({
     marginBlockEnd: 38,
   },
   lowerContent: {
-    borderTopLeftRadius: 18,
-    borderTopRightRadius: 18,
+    borderRadius: 18,
 
     paddingBlock: 32,
     paddingInline: 18,
@@ -259,5 +306,14 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: "#EDEDED",
   },
-
+  obatItem: {
+    paddingInlineStart: 10,
+    paddingInlineEnd: 12,
+    paddingBlock: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    borderBottomWidth: 0.5,
+    borderBottomColor: "#78797A80",
+  },
 });
