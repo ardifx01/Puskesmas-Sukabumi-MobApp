@@ -10,9 +10,9 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
-  FlatList,
 } from "react-native";
 import Collapsible from "react-native-collapsible";
+import { FlatList } from "react-native-gesture-handler";
 
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -181,7 +181,6 @@ export default function DetailPatientScreen({ route }) {
               renderItem={renderDataHistory}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={true}
-              scrollEnabled={false}
             />
 
           </View>
