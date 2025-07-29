@@ -4,6 +4,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StyleSheet } from "react-native";
 import { SafeAreaProvider } from "react-native-safe-area-context";
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 import { isLoaded, useFonts } from 'expo-font';
 
@@ -44,26 +45,28 @@ export default function App() {
   }
 
   return (
-    <SafeAreaProvider>
-      <NavigationContainer >
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          {isSignedIn ? (
-            <>
-            <Stack.Screen name="main" component={AppTabs}/>
-            <Stack.Screen name="detail-patient" component={DetailPatient}/>
-            </>
+    <GestureHandlerRootView>
+      <SafeAreaProvider>
+        <NavigationContainer >
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {isSignedIn ? (
+              <>
+              <Stack.Screen name="main" component={AppTabs}/>
+              <Stack.Screen name="detail-patient" component={DetailPatient}/>
+              </>
 
-            
-          ) : (
-            <Stack.Screen
-              name="login"
-              component={LoginScreens}
-              options={{ headerShown: false }}
-            />
-          )}
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaProvider>
+              
+            ) : (
+              <Stack.Screen
+                name="login"
+                component={LoginScreens}
+                options={{ headerShown: false }}
+              />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>
+    </GestureHandlerRootView>
   );
 }
 const styles = StyleSheet.create({
