@@ -175,7 +175,7 @@ export default function DetailPatientScreen({ route }) {
             </View>
           </View>
 
-          <View style={{}}>
+          <View style={{flex: 1}}>
             <FlatList
               data={dummyArray}
               renderItem={renderDataHistory}
@@ -248,6 +248,7 @@ const styles = StyleSheet.create({
     marginBlockEnd: 38,
   },
   lowerContent: {
+    flex: 1,
     borderRadius: 18,
 
     paddingBlock: 32,
