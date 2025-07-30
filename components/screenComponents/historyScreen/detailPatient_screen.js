@@ -16,6 +16,7 @@ import { FlatList } from "react-native-gesture-handler";
 
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
+import { LinearGradient } from "expo-linear-gradient";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "../../middleware/tools/useIcons";
@@ -145,15 +146,22 @@ export default function DetailPatientScreen({ route }) {
         <View style={[styles.upperContent]}>
           <View style={styles.headerContainer}>
             <Pressable
-              style={[styles.actionCircleButton]}
+              style={[styles.actionCircleButtonContainer, {transform: [{ rotateZ: '80deg' }],}]}
               onPress={() => navigation.goBack()}
             >
-              <UseIcons
-                name="angle-left"
-                set="FontAwesome6"
-                size={20}
-                color="#4ACDD1"
-              />
+              <LinearGradient colors={['gray', '#FFFFFF']}
+                              start={{ x: 0, y: 2 }}
+                              end={{ x: 1, y: 1 }}
+                              style={styles.actionCircleButton}
+              >
+                <UseIcons
+                  name="angle-left"
+                  set="FontAwesome6"
+                  size={20}
+                  color="#4ACDD1"
+                  style={[{transform: [{ rotateZ: '-80deg' }],}]}
+                />
+              </LinearGradient>
             </Pressable>
             <View style={{ flex: 0.85, alignItems: "center" }}>
               <Text style={[styles.headerTitle]}>Detail Pasien</Text>
@@ -164,14 +172,14 @@ export default function DetailPatientScreen({ route }) {
         <View style={[styles.lowerContent]}>
           <View style={{ marginBlockEnd: 16 }}>
             <Text style={[styles.medText, { fontSize: 24 }]}>
-              Aether Hikari
+              Nurroni
             </Text>
             <View style={[{ flexDirection: "row", alignItems: "center" }]}>
               <Text style={[styles.normalText, { fontSize: 16 }]}>
                 Laki-laki
               </Text>
               <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-              <Text style={[styles.normalText, { fontSize: 16 }]}>20th</Text>
+              <Text style={[styles.normalText, { fontSize: 16 }]}>22th</Text>
             </View>
           </View>
 
@@ -205,15 +213,19 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
   },
-  actionCircleButton: {
+  actionCircleButtonContainer: {
     width: 45,
     height: 45,
     borderRadius: 45 / 2,
+    overflow: "hidden",
 
+    shadowColor: "#000",
+    elevation: 2
+  },
+  actionCircleButton: {
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
-
-    backgroundColor: "rgba(255, 255, 255, 0.7)",
   },
   headerTitle: {
     color: "#4ACDD1",
