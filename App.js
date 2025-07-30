@@ -11,7 +11,7 @@ import { isLoaded, useFonts } from 'expo-font';
 import LoginScreens from "./components/login_screen";
 import AppTabs from "./components/tabs";
 import DetailPatient from "./components/screenComponents/historyScreen/detailPatient_screen";
-
+import NewPatientScreen from "./components/screenComponents/homeScreen/newPatientSubmission_screen";
 
 var isSignedIn = true;
 const Stack = createNativeStackNavigator();
@@ -53,6 +53,7 @@ export default function App() {
               <>
               <Stack.Screen name="main" component={AppTabs}/>
               <Stack.Screen name="detail-patient" component={DetailPatient}/>
+              <Stack.Screen name="new-patient" component={NewPatientScreen}/>
               </>
 
               
