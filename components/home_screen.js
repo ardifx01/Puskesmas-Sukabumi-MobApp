@@ -12,6 +12,7 @@ import {
 } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
+import { useNavigation } from "expo-router";
 // import { isLoaded, useFonts } from "expo-font";
 import SvgUri from "expo-svg-uri";
 import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
@@ -23,6 +24,7 @@ const windowWidth = Dimensions.get("window").width;
 // const windowHeight = Dimensions.get("window").height;
 
 export default function HomeScreen({route}) {
+  const navigation = useNavigation();
   const dummyArray = Array(3).fill(null);
   console.log(route.name)
 
@@ -165,6 +167,9 @@ export default function HomeScreen({route}) {
                     backgroundColor: "#4ACDD1",
                   },
                 ]}
+                onPress={() => {
+                    navigation.navigate("new-patient");
+                }}
               >
                 <View
                   style={[
@@ -188,13 +193,14 @@ export default function HomeScreen({route}) {
                     Catat Pemeriksaan Baru
                   </Text>
                 </View>
-
-                <FontAwesome
+                <UseIcons
                   name="angle-right"
-                  color="#fff"
+                  set="FontAwesome"
                   size={30}
-                  style={[{ paddingEnd: 9 }]}
+                  color="#fff"
+                  style={{paddingEnd:9}}
                 />
+ 
               </TouchableOpacity>
             </View>
 
