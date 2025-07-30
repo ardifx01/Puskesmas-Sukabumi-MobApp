@@ -1,20 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useForm, Controller } from "react-hook-form";
 import {
   StyleSheet,
   Text,
   TextInput,
   View,
-  ImageBackground,
-  Image,
   Dimensions,
   Pressable,
   TouchableOpacity,
-  LayoutAnimation,
-  UIManager,
-  Platform
 } from "react-native";
-import Collapsible from "react-native-collapsible";
 import { FlatList } from "react-native-gesture-handler";
 
 import { useNavigation } from "expo-router";
@@ -27,121 +22,28 @@ import UseIcons from "../../middleware/tools/useIcons";
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-
-// Component for Accordion
-const AccordionItem = React.memo(({ title, initialCollapsed = true }) => {
-  const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index}` }));
-  const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
-
-  const toggleCollapse = () => {
-    setIsCollapsed(!isCollapsed);
-  };
-
-  const renderObatItem = ({item}) => {
-    return (
-    <View style={styles.obatItem}>
-      <View>
-        <Text style={[styles.normalText, { fontSize: 20 }]}>Paracetamol</Text>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-          <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-          <Text style={[styles.normalText, { fontSize: 16 }]}>Kapsul</Text>
-          <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-          <Text style={[styles.normalText, { fontSize: 16 }]}>
-            Antibiotik
-          </Text>
-        </View>
-      </View>
-
-      <Text style={[styles.normalText, { fontSize: 20, color: "#616161" }]}>
-        2
-      </Text>
-    </View>
-    );
-  };
-
-  return (
-    <View style={{ marginBlockStart: 4 }}>
-      <Pressable
-        onPress={toggleCollapse}
-        style={{
-          alignContent: "center",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text style={[styles.normalText, { fontSize: 18 }]}>{title}</Text>
-        <UseIcons
-          name={isCollapsed ? "arrow-right" : "arrow-drop-down"}
-          set="MaterialIcons"
-          color="#616161"
-        />
-      </Pressable>
-
-      <Collapsible collapsed={isCollapsed}>
-        <View style={[styles.itemContent]}>
-          <FlatList
-            data={dummyArray} // Data Source
-            renderItem={renderObatItem}
-            keyExtractor={(item) => item.id}
-            // Properti untuk mengontrol performa FlatList
-            initialNumToRender={3} // Jumlah item awal yang dirender
-            showsVerticalScrollIndicator={true} // Sembunyikan scroll indicator jika tidak diinginkan
-            contentContainerStyle={{gap: 12}}
-          />
-        </View>
-      </Collapsible>
-    </View>
-  );
-});
-
-// Component for History List
-const HistoryList = React.memo(({item}) => (
-  <View style={[styles.detailData]}>
-    <View
-      style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
-    >
-      <UseIcons
-        name="calendar-alt"
-        set="FontAwesome5"
-        size={15}
-        color="#4ACDD1"
-      />
-
-      <View>
-        <Text style={[styles.normalText, { fontSize: 18 }]}>
-          {item.id}
-        </Text>
-      </View>
-    </View>
-
-    <View style={{ gap: 8 }}>
-      <Text style={[styles.normalText, { fontSize: 18 }]}>
-        Pemeriksa :<Text style={[styles.medText]}> Dr. Keqing</Text>
-      </Text>
-      <Text style={[styles.normalText, { fontSize: 18 }]}>
-        Keluhan :<Text style={[styles.medText]}> Demam, Pilek</Text>
-      </Text>
-      <Text style={[styles.normalText, { fontSize: 18 }]}>
-        Diagnosa :<Text style={[styles.medText]}> TBC</Text>
-      </Text>
-    </View>
-
-    <AccordionItem
-      title="Daftar Resep Obat"
-    />
-  </View>
-));
-
 // Default export
 export default function NewPatientScreen({ route }) {
-  const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index}` }));
-  const navigation = useNavigation();
+  const dummyArray = Array(10)
+    .fill(null)
+    .map((_, index) => ({ id: `${index}` }));
 
-  const renderDataHistory = ({item}) => {
-    return (
-      <HistoryList item={item}/>
-    );
-  };
+  const navigation = useNavigation();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: {
+      citizen_id: "",
+      name: "",
+      age: "",
+      gender: "",
+      complaint: "",
+      diagnose: "",
+    },
+  });
+  const onSubmit = (data) => console.log(data);
 
   return (
     <SafeAreaView style={{ backgroundColor: "#F7F9FC" }}>
@@ -149,55 +51,252 @@ export default function NewPatientScreen({ route }) {
         <View style={[styles.upperContent]}>
           <View style={styles.headerContainer}>
             <Pressable
-              style={[styles.actionCircleButtonContainer, {transform: [{ rotateZ: '80deg' }],}]}
+              style={[
+                styles.actionCircleButtonContainer,
+                { transform: [{ rotateZ: "80deg" }] },
+              ]}
               onPress={() => navigation.goBack()}
             >
-              <LinearGradient colors={['gray', '#FFFFFF']}
-                              start={{ x: 0, y: 2 }}
-                              end={{ x: 1, y: 1 }}
-                              style={styles.actionCircleButton}
+              <LinearGradient
+                colors={["gray", "#FFFFFF"]}
+                start={{ x: 0, y: 2 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.actionCircleButton}
               >
                 <UseIcons
                   name="angle-left"
                   set="FontAwesome6"
                   size={20}
                   color="#4ACDD1"
-                  style={[{transform: [{ rotateZ: '-80deg' }],}]}
+                  style={[{ transform: [{ rotateZ: "-80deg" }] }]}
                 />
               </LinearGradient>
             </Pressable>
             <View style={{ flex: 0.85, alignItems: "center" }}>
-              <Text style={[styles.headerTitle]}>Detail Pasien</Text>
+              <Text style={[styles.headerTitle]}>Catat Pemeriksaan Baru</Text>
             </View>
           </View>
         </View>
 
-        <View style={[styles.lowerContent]}>
-          <View style={{ marginBlockEnd: 16 }}>
-            <Text style={[styles.medText, { fontSize: 24 }]}>
-              Nurroni
-            </Text>
-            <View style={[{ flexDirection: "row", alignItems: "center" }]}>
-              <Text style={[styles.normalText, { fontSize: 16 }]}>
-                Laki-laki
-              </Text>
-              <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-              <Text style={[styles.normalText, { fontSize: 16 }]}>22th</Text>
+        <View style={[styles.lowerContent, {}]}>
+          <View style={[styles.formSection,]}>
+            <View style={{ gap: 25 }}>
+              <View style={[{ gap: 20 }]}>
+                <View>
+                  <Text style={styles.formTextTitle}>NIK</Text>
+                  <View style={styles.form}>
+                    <View style={[styles.formInput, { height: 49 }]}>
+                      <Controller
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <TextInput
+                            placeholder="Masukkan NIK pasien sesuai KTP!"
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )}
+                        name="citizen_id"
+                      />
+                      {errors.citizen_id && (
+                        <Text style={styles.errorTextInput}>
+                          Mohon masukkan NIK pasien!
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.formTextTitle}>Nama Pasien</Text>
+                  <View style={styles.form}>
+                    <View style={[styles.formInput, { height: 49 }]}>
+                      <Controller
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <TextInput
+                            placeholder="Masukkan nama lengkap pasien"
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )}
+                        name="name"
+                      />
+                      {errors.name && (
+                        <Text style={styles.errorTextInput}>
+                          Mohon masukkan nama pasien!
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.formTextTitle}>Umur</Text>
+                  <View style={styles.form}>
+                    <View style={[styles.formInput, { height: 49 }]}>
+                      <Controller
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <TextInput
+                            placeholder="Masukkan umur pasien"
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )}
+                        name="age"
+                      />
+                      {errors.age && (
+                        <Text style={styles.errorTextInput}>
+                          Mohon masukkan umur pasien!
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.formTextTitle}>Jenis Kelamin</Text>
+                  <View style={styles.form}>
+                    <View style={[styles.formInput, { height: 49 }]}>
+                      <Controller
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <TextInput
+                            placeholder="Masukkan jenis-kelamin pasien"
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )}
+                        name="gender"
+                      />
+                      {errors.gender && (
+                        <Text style={styles.errorTextInput}>
+                          Mohon masukkan nama pasien!
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+                <View>
+                  <Text style={styles.formTextTitle}>Keluhan</Text>
+                  <View style={styles.form}>
+                    <View
+                      style={[
+                        styles.formInput,
+                        { height: 70, justifyContent: "none" },
+                      ]}
+                    >
+                      <Controller
+                        control={control}
+                        rules={{
+                          required: true,
+                        }}
+                        render={({ field: { onChange, onBlur, value } }) => (
+                          <TextInput
+                            placeholder="Masukkan keluhan pasien"
+                            onBlur={onBlur}
+                            onChangeText={onChange}
+                            value={value}
+                          />
+                        )}
+                        name="complaint"
+                      />
+                      {errors.complaint && (
+                        <Text style={styles.errorTextInput}>
+                          Mohon masukkan keluhan pasien!
+                        </Text>
+                      )}
+                    </View>
+                  </View>
+                </View>
+              </View>
+              <View style={styles.diagnoseSection}>
+                <Text style={[styles.formTextTitle]}>Diagnosa</Text>
+                <View style={styles.form}>
+                  <View
+                    style={[
+                      styles.formInput,
+                      { height: 70, justifyContent: "none" },
+                    ]}
+                  >
+                    <Controller
+                      control={control}
+                      rules={{
+                        required: true,
+                      }}
+                      render={({ field: { onChange, onBlur, value } }) => (
+                        <TextInput
+                          placeholder="Masukkan NIK pasien sesuai KTP!"
+                          onBlur={onBlur}
+                          onChangeText={onChange}
+                          value={value}
+                        />
+                      )}
+                      name="diagnose"
+                    />
+                    {errors.diagnose && (
+                      <Text style={styles.errorTextInput}>
+                        Mohon masukkan diagnosa pasien!
+                      </Text>
+                    )}
+                  </View>
+                </View>
+              </View>
             </View>
           </View>
 
-          <View style={{flex: 1}}>
-            <FlatList
-              data={dummyArray}
-              renderItem={renderDataHistory}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={true}
-              initialNumToRender={10}
-              maxToRenderPerBatch={15}
-              updateCellsBatchingPeriod={7}
-              windowSize={21}
-            />
-
+          <View style={[styles.buttonSection]}>
+              <TouchableOpacity
+                style={[
+                  styles.actionButton,
+                  {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "#4ACDD1",
+                  },
+                ]}
+                onPress={() => {
+                    navigation.goBack();
+                }}
+              >
+                <View
+                  style={[
+                    { flex: 2, flexDirection: "row", alignItems: "center" },
+                  ]}
+                >
+                  <View style={[styles.iconFitting]}>
+                  </View>
+                  <Text
+                    style={[
+                      styles.medText,
+                      { color: "#fff", fontSize: 18 },
+                    ]}
+                  >
+                    Pilih Obat
+                  </Text>
+                </View>
+                <UseIcons
+                  name="angle-right"
+                  set="FontAwesome"
+                  size={30}
+                  color="#fff"
+                  style={{paddingEnd:9}}
+                />
+ 
+              </TouchableOpacity>
           </View>
         </View>
 
@@ -205,7 +304,7 @@ export default function NewPatientScreen({ route }) {
       </View>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -227,7 +326,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
 
     shadowColor: "#000",
-    elevation: 2
+    elevation: 2,
   },
   actionCircleButton: {
     flex: 1,
@@ -264,16 +363,17 @@ const styles = StyleSheet.create({
   upperContent: {
     flexDirection: "column",
     justifyContent: "space-between",
-    marginBlockEnd: 38,
+    marginBlockEnd: 28,
   },
   lowerContent: {
     flex: 1,
-    borderRadius: 18,
-
-    paddingBlock: 32,
-    paddingInline: 18,
-
-    backgroundColor: "#FFF",
+  },
+  buttonSection: {
+    flex: 1,
+    alignContent: "center",
+    alignItems: "center",
+    justifyContent: "center",
+    
   },
   detailData: {
     flexDirection: "column",
@@ -288,14 +388,28 @@ const styles = StyleSheet.create({
     marginBlockStart: 32,
     maxHeight: 200,
   },
-  obatItem: {
-    paddingInlineStart: 10,
-    paddingInlineEnd: 12,
-    paddingBlock: 6,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#78797A80",
+  form: {
+    paddingBlockStart: 14,
   },
+  formInput: {
+    borderWidth: 1,
+    borderColor: "#EDEDED",
+    borderRadius: 12,
+    justifyContent: "center",
+    paddingLeft: 10,
+  },
+  errorTextInput: {
+    color: "red",
+  },
+  diagnoseSection: {
+    borderTopWidth: 1,
+    borderTopColor: "#D9D9D9",
+    paddingBlockStart: 20,
+  },
+  actionButton: {
+    paddingInline: 24,
+    paddingBlock: 17.5,
+    borderRadius: 14,
+  },
+
 });
