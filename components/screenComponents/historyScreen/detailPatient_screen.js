@@ -10,6 +10,9 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
+  LayoutAnimation,
+  UIManager,
+  Platform
 } from "react-native";
 import Collapsible from "react-native-collapsible";
 import { FlatList } from "react-native-gesture-handler";
@@ -26,7 +29,7 @@ const windowHeight = Dimensions.get("window").height;
 
 
 // Component for Accordion
-const AccordionItem = ({ title, initialCollapsed = true }) => {
+const AccordionItem = React.memo(({ title, initialCollapsed = true }) => {
   const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index}` }));
   const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
 
@@ -89,10 +92,10 @@ const AccordionItem = ({ title, initialCollapsed = true }) => {
       </Collapsible>
     </View>
   );
-};
+});
 
 // Component for History List
-const HistoryList = ({item}) => (
+const HistoryList = React.memo(({item}) => (
   <View style={[styles.detailData]}>
     <View
       style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
@@ -106,7 +109,7 @@ const HistoryList = ({item}) => (
 
       <View>
         <Text style={[styles.normalText, { fontSize: 18 }]}>
-          21 Juli 2025
+          {item.id}
         </Text>
       </View>
     </View>
@@ -127,7 +130,7 @@ const HistoryList = ({item}) => (
       title="Daftar Resep Obat"
     />
   </View>
-);
+));
 
 // Default export
 export default function DetailPatientScreen({ route }) {
@@ -189,6 +192,10 @@ export default function DetailPatientScreen({ route }) {
               renderItem={renderDataHistory}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={true}
+              initialNumToRender={10}
+              maxToRenderPerBatch={15}
+              updateCellsBatchingPeriod={7}
+              windowSize={21}
             />
 
           </View>
