@@ -62,7 +62,7 @@ const PatientDataItem = ({ item, onPress, }) => (
   <Pressable style={[styles.patientDataButton]} onPress={onPress}>
     <View>
       <Text style={[styles.normalText, { fontSize: 20 }]}>
-        {item.id}
+        item.id.name
       </Text>
       <View
         style={[{ flexDirection: "row", alignItems: "center" }]}
