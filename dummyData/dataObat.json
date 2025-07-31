@@ -1,0 +1,142 @@
+[
+  {
+    "id": "1",
+    "namaObat": "Paracetamol",
+    "bentukFisikObat": "Tablet",
+    "jenisKhasiatObat": "Pereda Nyeri",
+    "jumlahObat": 100
+  },
+  {
+    "id": "2",
+    "namaObat": "Amoxicillin",
+    "bentukFisikObat": "Kapsul",
+    "jenisKhasiatObat": "Antibiotik",
+    "jumlahObat": 50
+  },
+  {
+    "id": "3",
+    "namaObat": "Obat Batuk Sirup",
+    "bentukFisikObat": "Cair",
+    "jenisKhasiatObat": "Obat Batuk",
+    "jumlahObat": 1
+  },
+  {
+    "id": "4",
+    "namaObat": "Antasida",
+    "bentukFisikObat": "Tablet Kunyah",
+    "jenisKhasiatObat": "Maag",
+    "jumlahObat": 30
+  },
+  {
+    "id": "5",
+    "namaObat": "Betadine",
+    "bentukFisikObat": "Cair",
+    "jenisKhasiatObat": "Antiseptik",
+    "jumlahObat": 1
+  },
+  {
+    "id": "6",
+    "namaObat": "Ibuprofen",
+    "bentukFisikObat": "Kapsul",
+    "jenisKhasiatObat": "Anti-inflamasi",
+    "jumlahObat": 40
+  },
+  {
+    "id": "7",
+    "namaObat": "Multivitamin",
+    "bentukFisikObat": "Tablet",
+    "jenisKhasiatObat": "Suplemen",
+    "jumlahObat": 60
+  },
+  {
+    "id": "8",
+    "namaObat": "Salep Gatal",
+    "bentukFisikObat": "Salep",
+    "jenisKhasiatObat": "Anti-gatal",
+    "jumlahObat": 2
+  },
+  {
+    "id": "9",
+    "namaObat": "Obat Diare",
+    "bentukFisikObat": "Tablet",
+    "jenisKhasiatObat": "Anti-diare",
+    "jumlahObat": 20
+  },
+  {
+    "id": "10",
+    "namaObat": "Minyak Kayu Putih",
+    "bentukFisikObat": "Cair",
+    "jenisKhasiatObat": "Penghangat Tubuh",
+    "jumlahObat": 1
+  },
+  {
+    "id": "11",
+    "namaObat": "Vitamin C",
+    "bentukFisikObat": "Tablet Effervescent",
+    "jenisKhasiatObat": "Suplemen",
+    "jumlahObat": 10
+  },
+  {
+    "id": "12",
+    "namaObat": "Obat Tetes Mata",
+    "bentukFisikObat": "Cair",
+    "jenisKhasiatObat": "Mata Kering",
+    "jumlahObat": 1
+  },
+  {
+    "id": "13",
+    "namaObat": "Losion Anti Nyamuk",
+    "bentukFisikObat": "Losion",
+    "jenisKhasiatObat": "Anti Nyamuk",
+    "jumlahObat": 2
+  },
+  {
+    "id": "14",
+    "namaObat": "Masker Medis",
+    "bentukFisikObat": "Masker",
+    "jenisKhasiatObat": "Proteksi Diri",
+    "jumlahObat": 50
+  },
+  {
+    "id": "15",
+    "namaObat": "Termometer Digital", 
+    "bentukFisikObat": "Alat",
+    "jenisKhasiatObat": "Pengukur Suhu",
+    "jumlahObat": 1
+  },
+  {
+    "id": "16",
+    "namaObat": "Hansaplast",
+    "bentukFisikObat": "Plester",
+    "jenisKhasiatObat": "Penutup Luka",
+    "jumlahObat": 1
+  },
+  {
+    "id": "17",
+    "namaObat": "Ciprofloxacin",
+    "bentukFisikObat": "Tablet",
+    "jenisKhasiatObat": "Antibiotik",
+    "jumlahObat": 30
+  },
+  {
+    "id": "18",
+    "namaObat": "Diapet",
+    "bentukFisikObat": "Kapsul",
+    "jenisKhasiatObat": "Anti-diare",
+    "jumlahObat": 10
+  },
+  {
+    "id": "19",
+    "namaObat": "Counterpain",
+    "bentukFisikObat": "Gel",
+    "jenisKhasiatObat": "Pereda Nyeri Otot",
+    "jumlahObat": 1
+  },
+  {
+    "id": "20",
+    "namaObat": "Entrostop",
+    "bentukFisikObat": "Tablet",
+    "jenisKhasiatObat": "Anti-diare",
+    "jumlahObat": 12
+  }
+]
