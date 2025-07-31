@@ -269,7 +269,7 @@ export default function NewPatientScreen({ route }) {
                   },
                 ]}
                 onPress={() => {
-                    navigation.goBack();
+                    navigation.navigate("medicine-picker");
                 }}
               >
                 <View
