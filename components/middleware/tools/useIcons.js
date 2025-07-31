@@ -16,6 +16,7 @@ import stetoscopIco from "../../../assets/icons/stetoscop_ico.svg";
 import calendarDate from "../../../assets/icons/calendarDate_ico.svg";
 import userId from "../../../assets/icons/user-id.svg";
 import mapMarker from "../../../assets/icons/map-marker-outline.svg";
+import addButton from "../../../assets/icons/formkit_add.svg";
 
 const ICON_SETS = {
   FontAwesome: FontAwesome,
@@ -33,7 +34,8 @@ const CUSTOM_SVG = {
   'stetoscop': stetoscopIco,
   'calendarDate': calendarDate,
   'userId': userId,
-  "map-marker": mapMarker
+  "map-marker": mapMarker,
+  "add-button": addButton,
 };
 
 /**
