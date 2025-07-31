@@ -221,7 +221,7 @@ export default function HomeScreen({route}) {
                     { fontSize: 14, color: "#4ACDD1" },
                     { textDecorationLine: "underline" },
                   ]}
-                  onPress={() => console.log("Lihat Semua link")}
+                  onPress={() => {navigation.navigate("Riwayat")}}
                 >
                   Lihat Semua
                 </Text>
