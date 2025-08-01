@@ -38,3 +38,6 @@ yarn-error.*
 
 #bun
 bun.lock
+
+#android
+android/
