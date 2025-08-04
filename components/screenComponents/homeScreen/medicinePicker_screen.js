@@ -13,11 +13,13 @@ import {
   LayoutAnimation,
   UIManager,
   Platform,
+  Alert,
 } from "react-native";
 import Collapsible from "react-native-collapsible";
 import { FlatList } from "react-native-gesture-handler";
 import Modal from "react-native-modal";
 import ExtraDimensions from 'react-native-extra-dimensions-android';
+import { useForm, Controller, useFieldArray } from 'react-hook-form';
 
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -28,7 +30,6 @@ import UseIcons from "../../middleware/tools/useIcons";
 
 // import data dummy
 import dataObat from "../../../dummyData/dataObat.json";
-import { Use } from "react-native-svg";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -37,34 +38,98 @@ const windowWidthED = ExtraDimensions.getRealWindowWidth();
 const windowHeightED = ExtraDimensions.getRealWindowHeight();
 
 // Component for Medicine Entry Item
-const MedicineEntryItem = ({ item, action }) => (
-  <View style={[styles.medicineEntry]}>
+const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, formController, handleQuantity }) => (
+  <View style={[isCartList === true ? styles.medicineCartEntry : styles.medicineEntry,]}>
     <View style={{ flex: 1 }}>
-      <Text style={[styles.medText, { fontSize: 18 }]}>{item.namaObat}</Text>
+      <Text style={[styles.medText, { fontSize: 14 }]}>{item.namaObat}</Text>
       <View style={[{ flexDirection: "row", alignItems: "center" }]}>
-        <Text style={[styles.normalText, { fontSize: 16 }]}>
+        <Text style={[styles.normalText, { fontSize: 12 }]}>
           {item.bentukFisikObat}
         </Text>
         <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-        <Text style={[styles.normalText, { fontSize: 16 }]}>
+        <Text style={[styles.normalText, { fontSize: 12 }]}>
           {item.jenisKhasiatObat}
         </Text>
       </View>
     </View>
-    <View style={{ flex: 1, alignItems: "center" }}>
-      <Text style={[styles.normalText, { fontSize: 16 }]}>Tersedia</Text>
-      <Text style={[styles.medText, { fontSize: 18 }]}>
-        {item.jumlahObat} PCs
-      </Text>
-    </View>
-    <Pressable
-      onPress={() => {
-        alert(JSON.stringify(item));
-        action(true);
-      }}
-    >
-      <UseIcons name="add-button" set="Custom" size={20} stroke="#4ACDD1" />
-    </Pressable>
+    {isCartList === true ? (
+        <>
+      <Controller
+        control={formController}
+        name={`selectedMedicines.${index}.selectedQuantity`}
+        rules={{
+          required: "Wajib",
+          min: { value: 0, message: "Min. 0" }, // Ubah min ke 0 agar bisa dihapus
+          max: { value: item.jumlahObat, message: `Max. ${item.jumlahObat}` },
+          pattern: {
+            value: /^[0-9]+$/,
+            message: "Angka"
+          }
+        }}
+        render={({ field: { onChange, onBlur, value }, fieldState: { error } }) => (
+          <View style={[styles.quantityControl, {flex: 1, flexDirection: "row", justifyContent: "flex-end", alignItems: "center"}]}>
+            {/* Tombol Kurang */}
+            <Pressable
+              style={[styles.quantityMinusButton, {marginInlineEnd: 25}]}
+              onPress={() => handleQuantity(index, 'decrement', value, item.jumlahObat)}
+              disabled={value <= 0} // Nonaktifkan jika 0
+            >
+              <UseIcons
+                name="minus"
+                set="Entypo"
+                size={13}
+                color="#BBBBBB"
+              />
+            </Pressable>
+
+            {/* Input Manual */}
+            <TextInput
+              style={[styles.medText, styles.quantityInput, {fontSize: 20},error && styles.inputError]}
+              onBlur={onBlur}
+              // Saat input manual, panggil handleQuantityChange dengan tipe 'manual'
+              onChangeText={(text) => handleQuantity(index, 'manual', text, item.jumlahObat)}
+              value={value ? String(value) : ''} // Konversi ke string untuk TextInput
+              keyboardType="numeric"
+              textAlign="center" // Rata tengah teks input
+            />
+
+            {/* Tombol Tambah */}
+            <Pressable
+              style={[styles.quantityPlusButton, {marginInlineStart: 25}]}
+              onPress={() => handleQuantity(index, 'increment', value, item.jumlahObat)}
+              disabled={value >= item.jumlahObat} // Nonaktifkan jika sudah mencapai stok maksimal
+            >
+              <UseIcons
+                name="plus"
+                set="Octicons"
+                size={13}
+                color="#BBBBBB"
+              />
+            </Pressable>
+
+            {/* Pesan Error */}
+            {error && <Text style={styles.errorMessage}>{error.message}</Text>}
+          </View>
+        )}
+      />
+        </>    
+      ) : (
+        <>
+          <View style={{ flex: 1, alignItems: "center" }}>
+            <Text style={[styles.normalText, { fontSize: 12 }]}>{item.jumlahObat > 0 ? "Tersedia" : "Tidak Tersedia"}</Text>
+            <Text style={[styles.medText, { fontSize: 14 }]}>
+              {item.jumlahObat} PCs
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => {addToMedList(item)}}
+          >
+            <UseIcons name="add-button" set="Custom" size={20} stroke="#4ACDD1" />
+          </Pressable>
+        </>   
+      )
+    }
+
   </View>
 );
 
@@ -102,7 +167,13 @@ const ComfirmationModal = ({isVisible, setVisibility, actionYes}) => (
               >
                 <Text style={[styles.medText,{fontSize: 12, color:"#4ACDD1"}]}>Batal</Text>
               </Pressable>
-              <Pressable style={[styles.button, styles.positiveButton]}>
+              <Pressable
+                style={[styles.button, styles.positiveButton]}
+                onPress={()=> {
+                  actionYes();
+                  setVisibility(false);
+                }}
+              >
                 <Text style={[styles.medText,{fontSize: 12, color:"#FFF"}]}>Konfirmasi</Text>
               </Pressable>
             </View>
@@ -119,6 +190,79 @@ export default function MedicinePicker({ route }) {
   console.log("Window Width: ", windowWidth, ",Window Height: ", windowHeight, " from Dimension");
   console.log("Window Width: ", windowWidthED, ",Window Height: ", windowHeightED, " from ExtraDimension");
 
+  const { control, handleSubmit, setValue, getValues } = useForm({
+    defaultValues: {
+      selectedMedicines: []
+    }
+  });
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "selectedMedicines",
+    keyName: "formId"
+  });
+
+  const addToMedList = (obat) => {
+    const existingIndex = fields.findIndex(item => item.id === obat.id); // Checking is Medicine already on list or not
+
+    if (existingIndex > -1) {
+      const currentQuantity = getValues(`selectedMedicines.${existingIndex}.selectedQuantity`);
+      const newQuantity = currentQuantity + 1;
+
+      // Validasi agar tidak melebihi stok asli
+      if (newQuantity > obat.jumlahObat) {
+        Alert.alert("Stok Habis", `Maaf, stok ${obat.namaObat} hanya tersedia ${obat.jumlahObat} PCs.`);
+        return;
+      }
+      setValue(`selectedMedicines.${existingIndex}.selectedQuantity`, newQuantity);
+    } else {
+      if (obat.jumlahObat <= 0) {
+        Alert.alert("Maaf", `${obat.namaObat} tidak tersedia saat ini.`);
+        return;
+      }
+      append({
+        ...obat,
+        selectedQuantity: 1 // Kuantitas awal saat ditambahkan
+      });
+    }
+  };
+
+  const medicineQuantityChange = (index, type, currentValue, maxStock) => {
+    let newQuantity = parseInt(currentValue) || 0; // Pastikan ini angka, default 0 jika input kosong/invalid
+
+    if (type === 'increment') {
+      newQuantity += 1;
+    } else if (type === 'decrement') {
+      newQuantity -= 1;
+    }
+
+    // Validasi: kuantitas tidak boleh melebihi stok
+    if (newQuantity > maxStock) {
+      Alert.alert("Stok Habis", `Kuantitas maksimal adalah ${maxStock} PCs.`);
+      newQuantity = maxStock; // Kembalikan ke stok maksimal
+    }
+
+    // Jika kuantitas menjadi 0, hapus item dari keranjang
+    if (newQuantity <= 0) { // Gunakan <= 0 untuk menangani input manual 0 juga
+      remove(index);
+    } else {
+      // Perbarui nilai kuantitas di react-hook-form
+      setValue(`selectedMedicines.${index}.selectedQuantity`, newQuantity);
+    }
+  };
+
+  const onSubmitCart = (data) => {
+    Alert.alert("Data Keranjang yang Disimpan:", JSON.stringify(data.selectedMedicines, null, 2), [
+      {
+        text: "OK",
+        onPress: () => {
+          // Lakukan sesuatu setelah menyimpan, misalnya reset keranjang
+          setValue('selectedMedicines', []); // Mengosongkan keranjang
+        }
+      }
+    ]);
+    // Di sini Anda bisa mengirimkan data ke API atau database
+  };
 
   const [isModalVisible, setModalVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -134,14 +278,20 @@ export default function MedicinePicker({ route }) {
 
   const renderMedicineEntry = ({ item }) => {
     return (
-      <MedicineEntryItem item={item} action={setIsMedicineHasBeenChoosen} />
+      <MedicineEntryItem item={item} action={setIsMedicineHasBeenChoosen} isCartList={false} addToMedList={addToMedList}/>
+    );
+  };
+
+  const renderMedicineCartEntry = ({ item, index }) => {
+    return (
+      <MedicineEntryItem item={item} index={index} isCartList={true} formController={control} handleQuantity={medicineQuantityChange}/>
     );
   };
 
   return (
     <SafeAreaView style={{ backgroundColor: "#F7F9FC" }}>
     
-      <ComfirmationModal isVisible={isModalVisible} setVisibility={setModalVisible}/>
+      <ComfirmationModal isVisible={isModalVisible} setVisibility={setModalVisible} actionYes={handleSubmit(onSubmitCart)}/>
       <View style={[styles.container]}>
         <View style={[styles.upperContent]}>
           <View style={styles.headerContainer}>
@@ -200,16 +350,29 @@ export default function MedicinePicker({ route }) {
               renderItem={renderMedicineEntry}
               keyExtractor={(item) => item.id}
               showsVerticalScrollIndicator={true}
-              contentContainerStyle={{ gap: 8, paddingBlockEnd: 8 }}
+              contentContainerStyle={{ gap: 8, paddingBlockEnd: 8}}
+              
             />
           </View>
           <View style={[styles.medicineCartWrapper, {paddingBlockEnd: (insets.bottom + 45),}]}>
-            <Text style={[styles.normalText, {fontSize: 1}]}>Daftar Resep Obat</Text>
+            <View>
+              <Text style={[styles.normalText, {fontSize: 14}]}>Daftar Resep Obat</Text>
+              {fields.length > 0 && (
+              <View style={[styles.medicineSelectedListWrapper, {maxHeight: 180, paddingBlockStart: 20}]}>
+                <FlatList
+                  data={fields}
+                  renderItem={renderMedicineCartEntry}
+                  keyExtractor={(item) => item.formId}
+                  showsVerticalScrollIndicator={true}
+                />
+              </View>
+              )}
+            </View>
             <Pressable 
               style={[styles.saveButton]}
               onPress={() => {setModalVisible(true)}}
             >
-              <Text style={[styles.medText, { fontSize: 18, color: "#fff" }]}>
+              <Text style={[styles.medText, { fontSize: 14, color: "#fff" }]}>
                 Simpan
               </Text>
             </Pressable>
@@ -252,7 +415,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#4ACDD1",
     fontFamily: "HelveticaNeue-Medium",
-    fontSize: 20,
+    fontSize: 16,
   },
   headerDesc: {
     color: "#fff",
@@ -307,8 +470,19 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: "#FFF",
   },
+  medicineCartEntry: {
+    paddingInline: 10,
+    paddingBlock: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+
+    borderBottomWidth: 1,
+    borderBottomColor: "#EDEDED",
+  },
   medicineCartWrapper: {
     gap: 20,
+    maxHeight: "50%",
     flexGrow: 0,
     paddingBlock: 16,
     paddingInline: 16,
