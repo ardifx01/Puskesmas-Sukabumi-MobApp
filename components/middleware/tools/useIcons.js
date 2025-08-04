@@ -7,6 +7,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 import Octicons from '@expo/vector-icons/Octicons';
 import SimpleLineIcons from '@expo/vector-icons/SimpleLineIcons';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import Entypo from '@expo/vector-icons/Entypo';
 
 // Local SVG Assets
 import datePickerIco from "../../../assets/icons/datePicker_ico.svg";
@@ -18,6 +19,7 @@ import userId from "../../../assets/icons/user-id.svg";
 import mapMarker from "../../../assets/icons/map-marker-outline.svg";
 import addButton from "../../../assets/icons/formkit_add.svg";
 
+
 const ICON_SETS = {
   FontAwesome: FontAwesome,
   FontAwesome6: FontAwesome6,
@@ -25,6 +27,7 @@ const ICON_SETS = {
   Octicons: Octicons,
   SimpleLineIcons: SimpleLineIcons,
   MaterialIcons: MaterialIcons,
+  Entypo: Entypo,
 };
 
 const CUSTOM_SVG = {
