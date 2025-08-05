@@ -51,7 +51,6 @@ export default function AppTabs() {
         tabBarInactiveTintColor: "#BBBBBB",
         headerShown: false,
       })}
-      tabBarOptions
     >
       <Tab.Screen name="Home" component={HomeScreens} />
       <Tab.Screen name="Riwayat" component={HistoryScreen} />
