@@ -35,10 +35,23 @@ export default function AppTabs() {
           // You can return any component that you like here!
           return <UseIcons name={iconName} set={iconSet} size={size} color={color} />;
         },
+        tabBarItemStyle: {
+          paddingBlock: 14,
+        },
+        tabBarStyle: {
+          height: 90,
+
+          borderWidth: 1,
+          borderColor: "#EDEDED",
+          borderTopLeftRadius: 32,
+          borderTopRightRadius: 32,
+
+        },
         tabBarActiveTintColor: "#4ACDD1",
-        tabBarInactiveTintColor: "gray",
+        tabBarInactiveTintColor: "#BBBBBB",
         headerShown: false,
       })}
+      tabBarOptions
     >
       <Tab.Screen name="Home" component={HomeScreens} />
       <Tab.Screen name="Riwayat" component={HistoryScreen} />
