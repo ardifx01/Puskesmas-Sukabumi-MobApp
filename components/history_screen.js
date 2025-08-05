@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   StyleSheet,
   Text,
@@ -41,7 +41,7 @@ const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
       <UseIcons
         name="equalizer"
         set="SimpleLineIcons"
-        size={17}
+        size={15}
         color={textColor}
       />
     </Pressable>
@@ -50,7 +50,7 @@ const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
       onPress={onPress}
       style={[styles.filterButton, { backgroundColor: backgroundColor }]}
     >
-      <Text style={[styles.medText, { fontSize: 16 }, { color: textColor }]}>
+      <Text style={[styles.medText, { fontSize: 14 }, { color: textColor }]}>
         {item.filterName}
       </Text>
     </Pressable>
@@ -61,17 +61,17 @@ const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
 const PatientDataItem = ({ item, onPress, }) => (
   <Pressable style={[styles.patientDataButton]} onPress={onPress}>
     <View>
-      <Text style={[styles.normalText, { fontSize: 20 }]}>
+      <Text style={[styles.normalText, { fontSize: 16 }]}>
         item.id.name
       </Text>
       <View
         style={[{ flexDirection: "row", alignItems: "center" }]}
       >
-        <Text style={[styles.normalText, {fontSize: 16}]}>Laki-laki</Text>
-        <Text style={{ fontSize: 20, marginInline: 3.5 }}>
+        <Text style={[styles.normalText, {fontSize: 12}]}>Laki-laki</Text>
+        <Text style={{ fontSize: 16, marginInline: 7 }}>
           •
         </Text>
-        <Text style={[styles.normalText, {fontSize: 16}]}>20th</Text>
+        <Text style={[styles.normalText, {fontSize: 12}]}>20th</Text>
       </View>
     </View>
 
@@ -85,7 +85,7 @@ const PatientDataItem = ({ item, onPress, }) => (
       <View
         style={[{ flexDirection: "row", alignItems: "center" }]}
       >
-        <Text style={[styles.italicText, {fontSize: 18}]}>Diagnosa: {diseaseName}</Text>
+        <Text style={[styles.italicText, {fontSize: 14, color: "#606060"}]}>Diagnosa: {diseaseName}</Text>
       </View>
 
       <View
@@ -100,7 +100,7 @@ const PatientDataItem = ({ item, onPress, }) => (
           />
         </View>
         <View>
-          <Text style={[styles.normalText, {fontSize: 16}]}>21 Juli 2025</Text>
+          <Text style={[styles.normalText, {fontSize: 12}]}>21 Juli 2025</Text>
         </View>
       </View>
       
@@ -112,6 +112,7 @@ const PatientDataItem = ({ item, onPress, }) => (
 
 export default function HistoryScreen({ route }) {
   const navigation = useNavigation();
+  const insets = useSafeAreaInsets();
   const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index + 1}` }));
   console.log(windowHeight, windowWidth);
 
@@ -156,7 +157,7 @@ export default function HistoryScreen({ route }) {
         <View style={styles.container}>
           <View style={styles.upperContent}>
             <View style={styles.contentContainer}>
-              <Text style={[styles.headerTitle, {}]}>
+              <Text style={[styles.headerTitle]}>
                 Riwayat Pemeriksaan Pasien
               </Text>
               <Text style={[styles.normalText, styles.headerDesc]}>
@@ -212,7 +213,7 @@ export default function HistoryScreen({ route }) {
                 keyExtractor={(item) => item.id}
                 extraData={selectedFilter}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 12, paddingBlockEnd: 120}}
+                contentContainerStyle={{ gap: 12, paddingBlockEnd: insets.bottom + 180}}
               />
             </View>
 
@@ -246,11 +247,11 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#fff",
     fontFamily: "HelveticaNeue-Bold",
-    fontSize: 22,
+    fontSize: 20,
   },
   headerDesc: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 20,
 
     marginBlockStart: 8,
@@ -264,9 +265,13 @@ const styles = StyleSheet.create({
   medText: {
     fontFamily: "HelveticaNeue-Medium",
   },
+  boldText: {
+    fontFamily: "HelveticaNeue-Bold"
+  },
   filterButton: {
     paddingInline: 16,
     paddingBlock: 10,
+    justifyContent: "center",
     // marginInlineEnd: 6,
 
     borderRadius: 16,
