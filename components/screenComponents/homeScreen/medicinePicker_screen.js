@@ -289,10 +289,10 @@ export default function MedicinePicker({ route }) {
   };
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#F7F9FC" }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: "#F7F9FC", }}>
     
       <ComfirmationModal isVisible={isModalVisible} setVisibility={setModalVisible} actionYes={handleSubmit(onSubmitCart)}/>
-      <View style={[styles.container]}>
+      <View style={[{flex: 1},styles.container]}>
         <View style={[styles.upperContent]}>
           <View style={styles.headerContainer}>
             <Pressable
@@ -354,7 +354,7 @@ export default function MedicinePicker({ route }) {
               
             />
           </View>
-          <View style={[styles.medicineCartWrapper, {paddingBlockEnd: (insets.bottom + 45),}]}>
+          <View style={[styles.medicineCartWrapper]}>
             <View>
               <Text style={[styles.normalText, {fontSize: 14}]}>Daftar Resep Obat</Text>
               {fields.length > 0 && (
