@@ -9,6 +9,7 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 
@@ -46,8 +47,8 @@ export default function NewPatientScreen({ route }) {
   const onSubmit = (data) => console.log(data);
 
   return (
-    <SafeAreaView style={{ backgroundColor: "#F7F9FC" }}>
-      <View style={styles.container}>
+    <SafeAreaView style={[{ flex:1, backgroundColor: "#F7F9FC"}]}>
+      <View style={[styles.container]}>
         <View style={[styles.upperContent]}>
           <View style={styles.headerContainer}>
             <Pressable
@@ -78,8 +79,10 @@ export default function NewPatientScreen({ route }) {
           </View>
         </View>
 
-        <View style={[styles.lowerContent, {}]}>
-          <View style={[styles.formSection,]}>
+        <View style={[styles.lowerContent]}>
+          <ScrollView 
+            style={[styles.formSection, {flex: 1, marginBlockEnd: 30}]}
+          >
             <View style={{ gap: 25 }}>
               <View style={[{ gap: 20 }]}>
                 <View>
@@ -256,7 +259,7 @@ export default function NewPatientScreen({ route }) {
                 </View>
               </View>
             </View>
-          </View>
+          </ScrollView>
 
           <View style={[styles.buttonSection]}>
               <TouchableOpacity
@@ -308,8 +311,7 @@ export default function NewPatientScreen({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    // alignItems: "center",
-    // justifyContent: "center",
+    flex: 1,
     height: windowHeight,
     paddingTop: 19,
     paddingInline: 16,
@@ -369,11 +371,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   buttonSection: {
-    flex: 1,
     alignContent: "center",
     alignItems: "center",
     justifyContent: "center",
-    
+
+    paddingBlockEnd: 18,    
   },
   detailData: {
     flexDirection: "column",
