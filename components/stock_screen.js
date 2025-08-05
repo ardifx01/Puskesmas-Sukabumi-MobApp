@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   StyleSheet,
   Text,
@@ -15,8 +15,6 @@ import {
 
 import { StatusBar } from "expo-status-bar";
 // import { isLoaded, useFonts } from "expo-font";
-import SvgUri from "expo-svg-uri";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
 import UseIcons from "./middleware/tools/useIcons";
 
@@ -39,7 +37,7 @@ const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) =>
       onPress={onPress}
       style={[styles.filterButton, { backgroundColor: backgroundColor }]}
     >
-      <Text style={[styles.medText, { fontSize: 16 }, { color: textColor }]}>
+      <Text style={[styles.medText, { fontSize: 14 }, { color: textColor }]}>
         {item.filterName}
       </Text>
     </Pressable>
@@ -48,7 +46,7 @@ const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) =>
       onPress={onPress}
       style={[styles.filterButton, { backgroundColor: backgroundColor }]}
     >
-      <Text style={[styles.medText, { fontSize: 16 }, { color: textColor }]}>
+      <Text style={[styles.medText, { fontSize: 14 }, { color: textColor }]}>
         {item.filterName}
       </Text>
     </Pressable>
@@ -70,8 +68,8 @@ const PatientDataItem = ({
         justifyContent: "space-between",
       }}
     >
-      <Text style={[styles.normalText, {fontSize: 20}]}>Paracetamol</Text>
-      <Text style={[styles.normalText, { fontSize: 16 }]}> Tersedia </Text>
+      <Text style={[styles.normalText, {fontSize: 16}]}>Paracetamol</Text>
+      <Text style={[styles.normalText, { fontSize: 12 }]}> Tersedia </Text>
     </View>
 
     <View
@@ -82,12 +80,12 @@ const PatientDataItem = ({
     >
 
         <View style={[{ flexDirection: "row", alignItems: "center" }]}>
-          <Text style={[styles.normalText, {fontSize: 14}]}>Kapsul</Text>
-          <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-          <Text style={[styles.normalText, {fontSize: 14}]}>Antibiotik</Text>
+          <Text style={[styles.normalText, {fontSize: 12}]}>Kapsul</Text>
+          <Text style={{ fontSize: 16, marginInline: 3.5 }}>•</Text>
+          <Text style={[styles.normalText, {fontSize: 12}]}>Antibiotik</Text>
         </View>
 
-        <Text style={[styles.normalText, { fontSize: 18 }]}> 15 Pcs </Text>
+        <Text style={[styles.normalText, { fontSize: 14 }]}> 15 Pcs </Text>
 
     </View>
 
@@ -99,6 +97,7 @@ export default function StockScreen({ route }) {
     .fill(null)
     .map((_, index) => ({ id: `${index + 1}` }));
   console.log(route.name);
+  const insets = useSafeAreaInsets();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -139,7 +138,7 @@ export default function StockScreen({ route }) {
         <View style={styles.container}>
           <View style={styles.upperContent}>
             <View style={styles.contentContainer}>
-              <Text style={[styles.headerTitle, {}]}>Data Stock Obat</Text>
+              <Text style={[styles.headerTitle]}>Data Stock Obat</Text>
               <Text style={[styles.normalText, styles.headerDesc]}>
                 Pantau ketersediaan obat untuk mendukung layanan pasien.
               </Text>
@@ -165,7 +164,7 @@ export default function StockScreen({ route }) {
             </View>
           </View>
 
-          <View style={[styles.contentContainer, styles.lowerContent]}>
+          <View style={[styles.contentContainer, styles.lowerContent, {marginBlockEnd: insets.bottom + 40}]}>
             <View style={[styles.searchBox]}>
               <UseIcons
                 name="search"
@@ -193,7 +192,7 @@ export default function StockScreen({ route }) {
                 keyExtractor={(item) => item.id}
                 extraData={selectedFilter}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 12 }}
+                contentContainerStyle={{ gap: 12, paddingBlockEnd: insets.bottom }}
               />
             </View>
           </View>
@@ -226,15 +225,15 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#fff",
     fontFamily: "HelveticaNeue-Bold",
-    fontSize: 22,
+    fontSize: 20,
   },
   headerDesc: {
     color: "#fff",
-    fontSize: 16,
+    fontSize: 14,
     lineHeight: 20,
 
     marginBlockStart: 8,
-    paddingInlineEnd: 100,
+    paddingInlineEnd: 85,
   },
   normalText: {
     fontFamily: "HelveticaNeue-Light",
@@ -248,6 +247,7 @@ const styles = StyleSheet.create({
   filterButton: {
     paddingInline: 16,
     paddingBlock: 10,
+    justifyContent: "center",
     // marginInlineEnd: 6,
 
     borderRadius: 16,
@@ -259,7 +259,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   lowerContent: {
-    flex: 3.99,
+    flex: 3.85,
     paddingBlockStart: 18.14,
     paddingBlockEnd: 120,
   },
