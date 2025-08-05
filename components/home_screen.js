@@ -14,8 +14,6 @@ import {
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "expo-router";
 // import { isLoaded, useFonts } from "expo-font";
-import SvgUri from "expo-svg-uri";
-import { FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
 import UseIcons from "./middleware/tools/useIcons";
 
@@ -42,7 +40,7 @@ export default function HomeScreen({route}) {
             />
             <View style={{ marginLeft: 12, marginBlockStart: 5 }}>
               <Text style={styles.pfpNameText}>Keqing</Text>
-              <Text style={[styles.smallText, { color: "#fff" }]}>
+              <Text style={[styles.normalText, { fontSize: 12, color: "#fff" }]}>
                 Tenaga Kesehatan
               </Text>
             </View>
@@ -57,8 +55,8 @@ export default function HomeScreen({route}) {
             >
               <View style={styles.statCard}>
                 <View style={styles.divDetail}>
-                  <Text style={styles.normalText}>Puskesmas Sukabumi</Text>
-                  <Text style={[styles.boldText, { color: "#4ACDD1" }]}>
+                  <Text style={[styles.normalText, {fontSize: 14}]}>Puskesmas Sukabumi</Text>
+                  <Text style={[styles.medText, { fontSize: 16, color: "#4ACDD1" }]}>
                     Unit Layanan Gigi & Mulut
                   </Text>
                   <View
@@ -73,7 +71,7 @@ export default function HomeScreen({route}) {
                 <View style={styles.statDetail}>
                   <View style={styles.patientCountWrapper}>
                     <View style={{alignContent: "center"}}>
-                      <Text style={styles.smallText}>Total Pasien</Text>
+                      <Text style={[styles.normalText, {fontSize: 12}]}>Total Pasien</Text>
                       <View style={styles.patientCount}>
                         <UseIcons
                           name="patientCount"
@@ -84,8 +82,8 @@ export default function HomeScreen({route}) {
                         />
                         <Text
                           style={[
-                            styles.boldText,
-                            { color: "#4ACDD1", fontSize: 22 },
+                            styles.medText,
+                            { color: "#4ACDD1", fontSize: 20 },
                           ]}
                         >
                           23
@@ -104,9 +102,9 @@ export default function HomeScreen({route}) {
                       >
                         <Text
                           style={[
-                            styles.boldText,
+                            styles.medText,
                             styles.textDatePickerActive,
-                            { fontSize: 16 },
+                            { fontSize: 12 },
                           ]}
                         >
                           Hari ini
@@ -121,9 +119,9 @@ export default function HomeScreen({route}) {
                       >
                         <Text
                           style={[
-                            styles.boldText,
+                            styles.medText,
                             styles.textDatePickerInActive,
-                            { fontSize: 16 },
+                            { fontSize: 12 },
                           ]}
                         >
                           Kemarin
@@ -149,8 +147,8 @@ export default function HomeScreen({route}) {
                     </View>
                     <Text
                       style={[
-                        { alignSelf: "flex-end", marginBlockStart: 10 },
-                        styles.smallText,
+                        { alignSelf: "flex-end", marginBlockStart: 10, fontSize: 12, color: "#616161" },
+                        styles.normalText,
                       ]}
                     >
                       21 Juli 2025
@@ -186,8 +184,8 @@ export default function HomeScreen({route}) {
                   </View>
                   <Text
                     style={[
-                      styles.boldText,
-                      { color: "#fff", marginStart: 16 },
+                      styles.medText,
+                      { fontSize: 16, color: "#fff", marginStart: 16 },
                     ]}
                   >
                     Catat Pemeriksaan Baru
@@ -214,11 +212,11 @@ export default function HomeScreen({route}) {
                   },
                 ]}
               >
-                <Text style={styles.boldText}>Pasien Terbaru</Text>
+                <Text style={[styles.medText, {fontSize: 16}]}>Pasien Terbaru</Text>
                 <Text
                   style={[
-                    styles.boldText,
-                    { fontSize: 14, color: "#4ACDD1" },
+                    styles.medText,
+                    { fontSize: 12, color: "#4ACDD1" },
                     { textDecorationLine: "underline" },
                   ]}
                   onPress={() => {navigation.navigate("Riwayat")}}
@@ -244,7 +242,7 @@ export default function HomeScreen({route}) {
                     ]}
                   >
                     <View>
-                      <Text style={[styles.boldText, { fontSize: 16 }]}>
+                      <Text style={[styles.normalText, { fontSize: 16 }]}>
                         Nama Pasien
                       </Text>
                     </View>
@@ -258,21 +256,26 @@ export default function HomeScreen({route}) {
                       <View
                         style={[{ flexDirection: "row", alignItems: "center" }]}
                       >
-                        <Text style={[styles.smallText]}>Laki-laki</Text>
-                        <Text style={{ fontSize: 20, marginInline: 3.5 }}>
+                        <Text style={[styles.normalText, {fontSize: 12, color:"#616161"}]}>Laki-laki</Text>
+                        <Text style={{ fontSize: 16, marginInline: 7 }}>
                           •
                         </Text>
-                        <Text style={[styles.smallText]}>20th</Text>
+                        <Text style={[styles.normalText, {fontSize: 12, color:"#616161"}]}>20th</Text>
                       </View>
 
                       <View
                         style={{ flexDirection: "row", alignItems: "center" }}
                       >
                         <View style={{ marginInlineEnd: 10 }}>
-                          <FontAwesome5 name="calendar-alt" color="#BBBBBB" />
+                          <UseIcons
+                            name="calendar-alt"
+                            set="FontAwesome5"
+                            color="#BBB"
+                            size={12}
+                          />
                         </View>
                         <View>
-                          <Text style={styles.smallText}>21 Juli 2025</Text>
+                          <Text style={[styles.normalText, {fontSize: 12}]}>21 Juli 2025</Text>
                         </View>
                       </View>
                     </View>
@@ -317,19 +320,13 @@ const styles = StyleSheet.create({
   pfpNameText: {
     color: "#fff",
     fontFamily: "HelveticaNeue-Medium",
-    fontSize: 16,
-  },
-  smallText: {
-    fontFamily: "HelveticaNeue-Light",
     fontSize: 14,
   },
   normalText: {
     fontFamily: "HelveticaNeue-Light",
-    fontSize: 16,
   },
-  boldText: {
+  medText: {
     fontFamily: "HelveticaNeue-Medium",
-    fontSize: 18,
   },
   contentContainer: {
     flex: 0.98,
@@ -374,9 +371,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   datePickerButton: {
-    paddingHorizontal: 12,
-    paddingBlockStart: 4,
-    paddingBlockEnd: 4,
+    paddingInline: 12,
+    justifyContent: "center"
   },
   datePickerActive: {
     backgroundColor: "#4ACDD1",
