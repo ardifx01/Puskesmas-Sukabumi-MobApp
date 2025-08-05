@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   StyleSheet,
   Text,
@@ -22,14 +22,15 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function ProfileScreen({ route }) {
+  const insets = useSafeAreaInsets();
   
   return (
     <ImageBackground
       source={require("../assets/img_bg_potrait.png")}
       style={styles.bgContainer}
     >
-      <SafeAreaView>
-        <View style={styles.container}>
+      <SafeAreaView style={[{flex: 1}]}>
+        <View style={[styles.container, {flex: 1, backgroundColor: ""}]}>
           <View style={[styles.upperContent, styles.contentContainer]}>
             <View style={styles.headerContainer}>
               <Pressable style={[styles.actionCircleButton]}>
@@ -50,52 +51,52 @@ export default function ProfileScreen({ route }) {
                 source={require("../assets/profile.png")}
               />
               <View style={[styles.profileDesc]}>
-                <Text style={[styles.medText, {fontSize: 24, color: "#fff", marginBlockEnd: 4,}]}>Keqing</Text>
-                <Text style={[styles.normalText, {color: "#fff", fontSize: 16}]}>Tenaga Kesehatan</Text>
+                <Text style={[styles.medText, {fontSize: 20, color: "#fff", marginBlockEnd: 4,}]}>Keqing</Text>
+                <Text style={[styles.normalText, {color: "#fff", fontSize: 12}]}>Tenaga Kesehatan</Text>
               </View>
             </View>
           </View>
 
-          <View style={[styles.lowerContent]}>
-            <View style={[styles.contentContainer, {gap: 24}]}>
+          <View style={[styles.lowerContent, {paddingBlockEnd: insets.bottom + 55}]}>
+            <View style={[styles.contentContainer, {flex: 5, gap: 24}]}>
               <View>
                 <Text style={styles.formTextTitle}>NIK</Text>
                 <View style={styles.informationForm}>
-                  <UseIcons name="userId" set="Custom" size={22} color="none" fillColor="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                  <UseIcons name="userId" set="Custom" size={20} color="none" fillColor="#bbbbbb"/>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
                 </View>
               </View>
 
               <View>
                 <Text style={styles.formTextTitle}>Jenis Kelamin</Text>
-                <View style={styles.informationForm}>
-                   <UseIcons name="user" set="FontAwesome5" size={22} color="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                <View style={[styles.informationForm]}>
+                   <UseIcons name="user" set="FontAwesome5" size={20} color="#bbbbbb"/>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
                 </View>
               </View>
 
               <View>
                 <Text style={styles.formTextTitle}>Umur</Text>
                 <View style={styles.informationForm}>
-                  <UseIcons name="calendarDate" set="Custom" size={22} color="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                  <UseIcons name="calendarDate" set="Custom" size={20} color="#bbbbbb"/>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
                 </View>
               </View>
 
               <View>
                 <Text style={styles.formTextTitle}>Alamat</Text>
                 <View style={styles.informationForm}>
-                  <UseIcons name="map-marker" set="Custom" size={22} color="none" fillColor="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 18}]}>123123123123123</Text>
+                  <UseIcons name="map-marker" set="Custom" size={20} color="none" fillColor="#bbbbbb"/>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
                 </View>
               </View>
               
             </View>
 
-            <View style={[styles.contentContainer, {flex: 1, alignItems: "center", flexDirection: "column", justifyContent: "flex-end"}]}>
+            <View style={[styles.contentContainer, {flex: 1, alignItems: "center", justifyContent: "center"}]}>
               <TouchableOpacity style={[styles.logoutButton]}>
-                <Text style={[styles.medText, {color: "#4ACDD1", fontSize: 18}]}>Log Out</Text>
-                <UseIcons name="arrow-right" set="FontAwesome6" size={18} color="#4ACDD1"/>
+                <Text style={[styles.medText, {color: "#4ACDD1", fontSize: 14}]}>Log Out</Text>
+                <UseIcons name="arrow-right" set="FontAwesome6" size={14} color="#4ACDD1"/>
               </TouchableOpacity>
             </View>
 
@@ -114,7 +115,6 @@ const styles = StyleSheet.create({
     width: windowWidth,
     resizeMode: "cover",
     // overflow: "hidden",
-    flex: 1,
     backgroundColor: "#F7F9FC",
   },
   container: {
@@ -142,8 +142,8 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: "#fff",
-    fontFamily: "HelveticaNeue-Bold",
-    fontSize: 22,
+    fontFamily: "HelveticaNeue-Med",
+    fontSize: 16,
   },
   headerDesc: {
     color: "#fff",
@@ -155,8 +155,9 @@ const styles = StyleSheet.create({
   },
   formTextTitle: {
     fontFamily: "HelveticaNeue-Light",
-    fontSize: 14,
+    fontSize: 12,
     color: "#616161",
+    
   },
   normalText: {
     fontFamily: "HelveticaNeue-Light",
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
     gap: 35,
 
     paddingInline: 24,
-    paddingBlock: 18,
+    paddingBlock: 17.5,
 
     borderWidth: 1,
     borderColor: "#EDEDED",
