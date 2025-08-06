@@ -18,6 +18,7 @@ import { StatusBar } from "expo-status-bar";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "./middleware/tools/useIcons";
+import fontNormalize from "./middleware/tools/fontNormalize";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -180,8 +181,8 @@ export default function HistoryScreen({ route }) {
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 ListHeaderComponent={<View style={{ paddingLeft: 0 }} />} // Add padding to the left
-                ListFooterComponent={<View style={{ paddingRight: 11 }} />} // Add padding to the right
-                contentContainerStyle={{ gap: 6, paddingBlockEnd: 13.93 }}
+                ListFooterComponent={<View style={{ paddingRight: fontNormalize(11) }} />} // Add padding to the right
+                contentContainerStyle={{ gap: fontNormalize(6), paddingBlockEnd: fontNormalize(13.93) }}
               />
             </View>
           </View>
@@ -213,7 +214,7 @@ export default function HistoryScreen({ route }) {
                 keyExtractor={(item) => item.id}
                 extraData={selectedFilter}
                 showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 12, paddingBlockEnd: insets.bottom + 180}}
+                contentContainerStyle={{ gap: 12, paddingBlockEnd: 380}}
               />
             </View>
 
@@ -228,9 +229,7 @@ export default function HistoryScreen({ route }) {
 
 const styles = StyleSheet.create({
   bgContainer: {
-    height: 210,
-    width: windowWidth,
-    resizeMode: "cover",
+    height: fontNormalize(210),
     // overflow: "hidden",
     flex: 1,
     backgroundColor: "#F7F9FC",
@@ -254,7 +253,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     lineHeight: 20,
 
-    marginBlockStart: 8,
+    marginBlockStart: fontNormalize(8),
     paddingInlineEnd: 33,
   },
   normalText: {
@@ -269,26 +268,22 @@ const styles = StyleSheet.create({
     fontFamily: "HelveticaNeue-Bold"
   },
   filterButton: {
-    paddingInline: 16,
-    paddingBlock: 10,
+    paddingInline: fontNormalize(16),
+    paddingBlock: fontNormalize(10),
     justifyContent: "center",
     // marginInlineEnd: 6,
 
     borderRadius: 16,
   },
   upperContent: {
-    flex: 1.2,
-
+    gap: fontNormalize(30),
     flexDirection: "column",
     justifyContent: "space-between",
   },
   lowerContent: {
-    flex: 5,
-    paddingBlockStart: 18.14,
+    paddingBlockStart: fontNormalize(18.14),
   },
   searchBox: {
-    width: "100%",
-    height: 52,
     flexDirection: "row",
     alignItems: "center",
     gap: 10,
@@ -305,7 +300,7 @@ const styles = StyleSheet.create({
   patientDataButton: {
     backgroundColor: "#fff",
     borderRadius: 16,
-    paddingInline: 24,
-    paddingBlock: 20,
+    paddingInline: fontNormalize(24),
+    paddingBlock: fontNormalize(20),
   },
 });
