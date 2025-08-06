@@ -15,7 +15,6 @@ import {
   Platform,
   Alert,
 } from "react-native";
-import Collapsible from "react-native-collapsible";
 import { FlatList } from "react-native-gesture-handler";
 import Modal from "react-native-modal";
 import ExtraDimensions from 'react-native-extra-dimensions-android';
