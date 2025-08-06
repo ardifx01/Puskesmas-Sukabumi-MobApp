@@ -72,19 +72,19 @@ export default function HomeScreen({route}) {
                 <View style={styles.statDetail}>
                   <View style={[styles.patientCountWrapper]}>
                     <View style={{flex: 1, alignItems: "center"}}>
-                      <Text style={[styles.normalText, {flex: 1,fontSize: 12}]}>Total Pasien</Text>
+                      <Text style={[styles.normalText, {flex: 1,fontSize: 12,}]}>Total Pasien</Text>
                       <View style={[styles.patientCount, {gap: fontNormalize(4)}]}>
                         <UseIcons
                           name="patientCount"
                           set="Custom"
-                          size={20}
+                          size={fontNormalize(20)}
                           color="#4ACDD1"
                           style={{marginInlineStart: 0}}
                         />
                         <Text
                           style={[
                             styles.medText,
-                            { color: "#4ACDD1", fontSize: 20 },
+                            { color: "#4ACDD1", fontSize: fontNormalize(20) },
                           ]}
                         >
                           23
