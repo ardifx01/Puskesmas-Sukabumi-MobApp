@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   StyleSheet,
   Text,
@@ -9,6 +9,7 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
@@ -16,6 +17,7 @@ import { useNavigation } from "expo-router";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "./middleware/tools/useIcons";
+import fontNormalize from "./middleware/tools/fontNormalize";
 
 
 const windowWidth = Dimensions.get("window").width;
@@ -23,8 +25,8 @@ const windowWidth = Dimensions.get("window").width;
 
 export default function HomeScreen({route}) {
   const navigation = useNavigation();
-  const dummyArray = Array(3).fill(null);
-  console.log(route.name)
+  const insets = useSafeAreaInsets();
+   const dummyArray = Array(3).fill(null).map((_, index) => ({ id: `${index + 1}` }));
 
   return (
     <ImageBackground
@@ -40,17 +42,15 @@ export default function HomeScreen({route}) {
             />
             <View style={{ marginLeft: 12, marginBlockStart: 5 }}>
               <Text style={styles.pfpNameText}>Keqing</Text>
-              <Text style={[styles.normalText, { fontSize: 12, color: "#fff" }]}>
+              <Text style={[styles.normalText, { fontSize: fontNormalize(12), color: "#fff" }]}>
                 Tenaga Kesehatan
               </Text>
             </View>
           </Pressable>
-          <View style={styles.contentContainer}>
+          <View style={[styles.contentContainer]}>
             <View
               style={{
-                flex: 1,
-                justifyContent: "space-between",
-                paddingBlockEnd: 40,
+                gap: 24
               }}
             >
               <View style={styles.statCard}>
@@ -61,24 +61,25 @@ export default function HomeScreen({route}) {
                   </Text>
                   <View
                     style={{
-                      borderColor: "#4ACDD1",
-                      borderBottomWidth: 0.3,
+                      borderBottomColor: "#4ACDD1",
+                      borderBottomWidth: 0.5,
                       marginBlockStart: 16,
+                      
                     }}
                   />
                 </View>
 
                 <View style={styles.statDetail}>
-                  <View style={styles.patientCountWrapper}>
-                    <View style={{alignContent: "center"}}>
-                      <Text style={[styles.normalText, {fontSize: 12}]}>Total Pasien</Text>
-                      <View style={styles.patientCount}>
+                  <View style={[styles.patientCountWrapper]}>
+                    <View style={{flex: 1, alignItems: "center"}}>
+                      <Text style={[styles.normalText, {flex: 1,fontSize: 12}]}>Total Pasien</Text>
+                      <View style={[styles.patientCount, {gap: fontNormalize(4)}]}>
                         <UseIcons
                           name="patientCount"
                           set="Custom"
                           size={20}
                           color="#4ACDD1"
-                          style={{marginInlineStart: -5}}
+                          style={{marginInlineStart: 0}}
                         />
                         <Text
                           style={[
@@ -104,7 +105,7 @@ export default function HomeScreen({route}) {
                           style={[
                             styles.medText,
                             styles.textDatePickerActive,
-                            { fontSize: 12 },
+                            { fontSize: fontNormalize(12) },
                           ]}
                         >
                           Hari ini
@@ -121,7 +122,7 @@ export default function HomeScreen({route}) {
                           style={[
                             styles.medText,
                             styles.textDatePickerInActive,
-                            { fontSize: 12 },
+                            { fontSize: fontNormalize(12) },
                           ]}
                         >
                           Kemarin
@@ -140,14 +141,14 @@ export default function HomeScreen({route}) {
                         <UseIcons
                           name="calendar-alt"
                           set="FontAwesome5"
-                          size={12}
+                          size={fontNormalize(12)}
                           color="#4ACDD1"
                         />
                       </Pressable>
                     </View>
                     <Text
                       style={[
-                        { alignSelf: "flex-end", marginBlockStart: 10, fontSize: 12, color: "#616161" },
+                        { alignSelf: "flex-end", marginBlockStart: 10, fontSize: fontNormalize(12), color: "#616161" },
                         styles.normalText,
                       ]}
                     >
@@ -156,6 +157,7 @@ export default function HomeScreen({route}) {
                   </View>
                 </View>
               </View>
+              
               <TouchableOpacity
                 style={[
                   styles.actionButton,
@@ -185,7 +187,7 @@ export default function HomeScreen({route}) {
                   <Text
                     style={[
                       styles.medText,
-                      { fontSize: 16, color: "#fff", marginStart: 16 },
+                      { fontSize: 16, color: "#fff", marginStart: fontNormalize(16) },
                     ]}
                   >
                     Catat Pemeriksaan Baru
@@ -196,19 +198,18 @@ export default function HomeScreen({route}) {
                   set="FontAwesome"
                   size={30}
                   color="#fff"
-                  style={{paddingEnd:9}}
+                  style={{paddingEnd:fontNormalize(9)}}
                 />
- 
               </TouchableOpacity>
             </View>
 
-            <View style={{ flex: 1 }}>
+            <View style={[{gap: 20, paddingBlockEnd: insets.bottom + 275.5}]}>
               <View
                 style={[
                   {
-                    flex: 1,
                     flexDirection: "row",
                     justifyContent: "space-between",
+                    alignItems: "center",
                   },
                 ]}
               >
@@ -224,21 +225,14 @@ export default function HomeScreen({route}) {
                   Lihat Semua
                 </Text>
               </View>
-
-              <View
-                style={{
-                  flex: 6,
-                  flexDirection: "column",
-                  justifyContent: "space-around",
-                }}
-              >
-                {dummyArray.map((_, index) => (
+              <FlatList
+                data={dummyArray}
+                renderItem={({}) => (
                   <View
-                    key={index}
                     style={[
                       { backgroundColor: "#fff" },
                       styles.actionButton,
-                      { paddingInline: 24 },
+                      { paddingInline: 24, paddingBlock: 16 },
                     ]}
                   >
                     <View>
@@ -280,8 +274,15 @@ export default function HomeScreen({route}) {
                       </View>
                     </View>
                   </View>
-                ))}
-              </View>
+                  )
+                }
+                keyExtractor={(item) => item.id}
+                showsVerticalScrollIndicator={false}
+                contentContainerStyle={{
+                  gap: 12,
+                  paddingBlockEnd: fontNormalize(insets.bottom + 60),
+                }}
+              />
             </View>
           </View>
           <StatusBar style="auto" />
@@ -293,9 +294,7 @@ export default function HomeScreen({route}) {
 
 const styles = StyleSheet.create({
   bgContainer: {
-    height: 288,
-    width: windowWidth,
-    resizeMode: "",
+    height: fontNormalize(288),
     overflow: "hidden",
     flex: 1,
     backgroundColor: "#F7F9FC",
@@ -304,23 +303,22 @@ const styles = StyleSheet.create({
     // alignItems: "center",
     // justifyContent: "center",
     height: "100%",
-    paddingLeft: 16,
-    paddingTop: 46,
-    paddingRight: 16,
+    paddingBlock: fontNormalize(28),
+    paddingInline: fontNormalize(16),
   },
   pfpArea: {
     flexDirection: "row",
     alignContent: "center",
   },
   photoProfile: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
+    width: fontNormalize(50),
+    height: fontNormalize(50),
+    borderRadius: fontNormalize(25),
   },
   pfpNameText: {
     color: "#fff",
     fontFamily: "HelveticaNeue-Medium",
-    fontSize: 14,
+    fontSize: fontNormalize(14),
   },
   normalText: {
     fontFamily: "HelveticaNeue-Light",
@@ -333,24 +331,20 @@ const styles = StyleSheet.create({
     marginBlockStart: 50,
 
     flexDirection: "column",
-    justifyContent: "space-evenly",
+    gap: 20,
   },
   statCard: {
-    backgroundColor: "#fff",
-    height: 184.3,
-
-    borderRadius: 16,
+    borderRadius: fontNormalize(16),
 
     paddingInline: 16,
-    paddingVertical: 20,
-
-    justifyContent: "space-between",
+    paddingBlock: 20,
+    gap: 40,
+    backgroundColor: "#fff",
 
     //dropShadow
     elevation: 9,
     shadowColor: "#0000000D",
   },
-  divDetail: {},
   statDetail: {
     flexDirection: "row",
   },
@@ -359,24 +353,25 @@ const styles = StyleSheet.create({
   },
   datePickerWrapper: {
     flex: 3,
-    paddingStart: 69,
+    paddingStart: fontNormalize(69),
   },
   patientCount: {
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   datePicker: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    justifyContent: "flex-end",
+    gap: fontNormalize(8)
   },
   datePickerButton: {
-    paddingInline: 12,
+    paddingInline: fontNormalize(12),
     justifyContent: "center"
   },
   datePickerActive: {
     backgroundColor: "#4ACDD1",
-    borderRadius: 16,
+    borderRadius: fontNormalize(16),
   },
   textDatePickerActive: {
     color: "#fff",
@@ -390,12 +385,13 @@ const styles = StyleSheet.create({
     color: "#4ACDD1",
   },
   actionButton: {
-    height: 72,
 
-    borderRadius: 16,
+
+    borderRadius: fontNormalize(16),
 
     justifyContent: "center",
-    paddingInline: 16,
+    paddingInline: fontNormalize(16),
+    paddingBlock: fontNormalize(16),
     // alignItems: "center",
   },
   iconFitting: {
