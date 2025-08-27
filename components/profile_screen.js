@@ -17,12 +17,23 @@ import { StatusBar } from "expo-status-bar";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "./middleware/tools/useIcons";
+import { useAuth } from "./middleware/context/authContext";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function ProfileScreen({ route }) {
   const insets = useSafeAreaInsets();
+  const { authData, onLogout } = useAuth();
+  const handleLogout = async() => {
+    console.log("Logout Handler Pressed !");
+    await onLogout();
+    if(result && result.error){
+      console.log("Login Error: ", result);
+    }
+  };
+  const userData = authData.userData;
+  console.log("User Data on Profile Screen: ", userData);
   
   return (
     <ImageBackground
@@ -48,10 +59,10 @@ export default function ProfileScreen({ route }) {
             <View style={[styles.profileContainer]}>
               <Image
                 style={styles.photoProfile}
-                source={require("../assets/profile.png")}
+                source={{ uri: userData.foto }}
               />
               <View style={[styles.profileDesc]}>
-                <Text style={[styles.medText, {fontSize: 20, color: "#fff", marginBlockEnd: 4,}]}>Keqing</Text>
+                <Text style={[styles.medText, {fontSize: 20, color: "#fff", marginBlockEnd: 4,}]}>{userData.name}</Text>
                 <Text style={[styles.normalText, {color: "#fff", fontSize: 12}]}>Tenaga Kesehatan</Text>
               </View>
             </View>
@@ -63,7 +74,7 @@ export default function ProfileScreen({ route }) {
                 <Text style={styles.formTextTitle}>NIK</Text>
                 <View style={styles.informationForm}>
                   <UseIcons name="userId" set="Custom" size={20} color="none" fillColor="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>{userData.nik}</Text>
                 </View>
               </View>
 
@@ -71,7 +82,7 @@ export default function ProfileScreen({ route }) {
                 <Text style={styles.formTextTitle}>Jenis Kelamin</Text>
                 <View style={[styles.informationForm]}>
                    <UseIcons name="user" set="FontAwesome5" size={20} color="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>{userData.gender}</Text>
                 </View>
               </View>
 
@@ -79,7 +90,7 @@ export default function ProfileScreen({ route }) {
                 <Text style={styles.formTextTitle}>Umur</Text>
                 <View style={styles.informationForm}>
                   <UseIcons name="calendarDate" set="Custom" size={20} color="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>{userData.age}</Text>
                 </View>
               </View>
 
@@ -87,14 +98,14 @@ export default function ProfileScreen({ route }) {
                 <Text style={styles.formTextTitle}>Alamat</Text>
                 <View style={styles.informationForm}>
                   <UseIcons name="map-marker" set="Custom" size={20} color="none" fillColor="#bbbbbb"/>
-                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>123123123123123</Text>
+                  <Text style={[styles.normalText, {fontSize: 16, color:"#757575"}]}>{userData.address}</Text>
                 </View>
               </View>
               
             </View>
 
             <View style={[styles.contentContainer, {flex: 1, alignItems: "center", justifyContent: "center"}]}>
-              <TouchableOpacity style={[styles.logoutButton]}>
+              <TouchableOpacity style={[styles.logoutButton]} onPress={handleLogout}>
                 <Text style={[styles.medText, {color: "#4ACDD1", fontSize: 14}]}>Log Out</Text>
                 <UseIcons name="arrow-right" set="FontAwesome6" size={14} color="#4ACDD1"/>
               </TouchableOpacity>
