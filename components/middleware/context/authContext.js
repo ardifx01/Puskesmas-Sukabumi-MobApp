@@ -44,11 +44,10 @@ export const AuthProvider = ({ children }) => {
                         console.log("Auth Header removed, Auth Header: ", axios.defaults.headers.common['Authorization']);
                         console.log('Clearing Auth Data...');
                         setAuthData({
-                            userToken: token,
-                            userData: userData,
-                            isSignedIn: true,
+                            userToken: null,
+                            userData: null,
+                            isSignedIn: false,
                         });
-                        console.log("Auth Data cleared, Auth Data: ", authData);
                     };
 
                 } else if(err.response?.status === 409) {
@@ -62,7 +61,7 @@ export const AuthProvider = ({ children }) => {
 
         const loadAuthData = async () => {
             const token = await SecureStore.getItemAsync(TOKEN_KEY);
-            const userData = await SecureStore.getItemAsync(USER_DATA);
+            const userData = JSON.parse(await SecureStore.getItemAsync(USER_DATA));
             if (token) {
                 console.log('Token found:', token);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
@@ -83,13 +82,21 @@ export const AuthProvider = ({ children }) => {
                         userData: userData,
                         isSignedIn: true,
                     });
+                    console.log("Auth Data Setting Complete!");
                 } catch (error) {
                     console.log("There is an error, check alert on phone !");
                 }
             }
         };
         loadAuthData();
+        return () => {
+            axios.interceptors.response.eject(interceptor);
+        };
     }, []);
+
+    useEffect(() => {
+        console.log("Auth Data: ", authData);
+    }, [authData]);
 
     const auth = async (username, password) => {
         try {
@@ -98,19 +105,53 @@ export const AuthProvider = ({ children }) => {
             await SecureStore.setItemAsync(USER_DATA, JSON.stringify(response.data.user));
             setAuthData({
                 userToken: await SecureStore.getItemAsync(TOKEN_KEY),
-                userData: await SecureStore.getItemAsync(USER_DATA),
+                userData: JSON.parse(await SecureStore.getItemAsync(USER_DATA)),
                 isSignedIn: true,
             });
             axios.defaults.headers.common['Authorization'] = `Bearer ${await SecureStore.getItemAsync(TOKEN_KEY)}`;
+            console.log("Login Success!");
         } catch (error) {
            console.log("There is an error, check alert on phone !"); 
         }
         
     };
 
+    const deauth = async () => {
+        try {
+            console.log("Logging out...");
+            console.log("Current Headers", axios.defaults.headers.common);
+            await axios.post(`${API_URL}/user/deauth`, { 
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log('Logged out !, deleting token ', await SecureStore.getItemAsync(TOKEN_KEY));
+            await SecureStore.deleteItemAsync(TOKEN_KEY);
+            console.log('Token deleted, Token: ', await SecureStore.getItemAsync(TOKEN_KEY));
+            console.log('Deleting user data ', await SecureStore.getItemAsync(USER_DATA));
+            await SecureStore.deleteItemAsync(USER_DATA);
+            console.log('User Data deleted, User Data: ', await SecureStore.getItemAsync(USER_DATA));
+            console.log("Removing Auth Header...");
+            axios.defaults.headers.common['Authorization'] = `Bearer ${null}`;
+            console.log("Auth Header removed, Auth Header: ", axios.defaults.headers.common['Authorization']);
+            console.log('Clearing Auth Data...');
+            await setAuthData({
+                userToken: null,
+                userData: null,
+                isSignedIn: false,
+            });
+            console.log("Auth Data cleared !");
+            alert("You have been logged out !");
+        } catch (error) {
+            console.log("There is an error, check alert on phone !");
+        }
+
+    };
+
     const value = {
         onLogin: auth,
-        // onLogout: deauth,
+        onLogout: deauth,
         authData,
     };
 
