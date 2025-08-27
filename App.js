@@ -13,11 +13,41 @@ import AppTabs from "./components/tabs";
 import DetailPatient from "./components/screenComponents/historyScreen/detailPatient_screen";
 import NewPatientScreen from "./components/screenComponents/homeScreen/newPatientSubmission_screen";
 import MedicinePicker from "./components/screenComponents/homeScreen/medicinePicker_screen";
+import { AuthProvider, useAuth } from "./components/middleware/context/authContext";
 
-var isSignedIn = true;
+// var isSignedIn = true;
 const Stack = createNativeStackNavigator();
 
+export const Application = () => {
+  const {authData} = useAuth();
+    return (
+      <SafeAreaProvider>
+        <NavigationContainer >
+          <Stack.Navigator screenOptions={{ headerShown: false }}>
+            {authData?.isSignedIn ? (
+              <>
+              <Stack.Screen name="main" component={AppTabs}/>
+              <Stack.Screen name="detail-patient" component={DetailPatient}/>
+              <Stack.Screen name="new-patient" component={NewPatientScreen}/>
+              <Stack.Screen name="medicine-picker" component={MedicinePicker}/>
+              </>
+
+              
+            ) : (
+              <Stack.Screen
+                name="login"
+                component={LoginScreens}
+                options={{ headerShown: false }}
+              />
+            )}
+          </Stack.Navigator>
+        </NavigationContainer>
+      </SafeAreaProvider>   
+    );
+};
+
 export default function App() {
+
 
   const [fontsLoaded, fontsLoadError] = useFonts({
     // normal font
@@ -47,28 +77,9 @@ export default function App() {
 
   return (
     <GestureHandlerRootView>
-      <SafeAreaProvider>
-        <NavigationContainer >
-          <Stack.Navigator screenOptions={{ headerShown: false }}>
-            {isSignedIn ? (
-              <>
-              <Stack.Screen name="main" component={AppTabs}/>
-              <Stack.Screen name="detail-patient" component={DetailPatient}/>
-              <Stack.Screen name="new-patient" component={NewPatientScreen}/>
-              <Stack.Screen name="medicine-picker" component={MedicinePicker}/>
-              </>
-
-              
-            ) : (
-              <Stack.Screen
-                name="login"
-                component={LoginScreens}
-                options={{ headerShown: false }}
-              />
-            )}
-          </Stack.Navigator>
-        </NavigationContainer>
-      </SafeAreaProvider>
+      <AuthProvider>
+        <Application/>
+      </AuthProvider>
     </GestureHandlerRootView>
   );
 }
