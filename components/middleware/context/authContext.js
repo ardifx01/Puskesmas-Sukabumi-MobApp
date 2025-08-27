@@ -5,7 +5,7 @@ import { set } from 'react-hook-form';
 
 const TOKEN_KEY = 'userToken';
 const USER_DATA = 'userData';
-export const API_URL = 'http://192.168.18.106:8080/api';
+export const API_URL = ' https://capable-premium-filly.ngrok-free.app/api';
 
 const AuthContext = createContext({});
 
