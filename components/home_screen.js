@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import axios from "axios";
 
 import { StatusBar } from "expo-status-bar";
 import { useNavigation } from "expo-router";
@@ -26,8 +27,7 @@ const windowWidth = Dimensions.get("window").width;
 
 export default function HomeScreen({route}) {
   const {authData} = useAuth();
-  const {userToken, userData} = authData;
-  console.log("Auth Data Home Screen:", authData);
+  const userData = authData.userData;
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
    const dummyArray = Array(3).fill(null).map((_, index) => ({ id: `${index + 1}` }));
@@ -42,10 +42,10 @@ export default function HomeScreen({route}) {
           <Pressable style={styles.pfpArea}>
             <Image
               style={styles.photoProfile}
-              source={require("../assets/profile.png")}
+              source={{uri: userData.foto }}
             />
             <View style={{ marginLeft: 12, marginBlockStart: 5 }}>
-              <Text style={styles.pfpNameText}>Keqing</Text>
+              <Text style={styles.pfpNameText}>{userData.name}</Text>
               <Text style={[styles.normalText, { fontSize: fontNormalize(12), color: "#fff" }]}>
                 Tenaga Kesehatan
               </Text>
