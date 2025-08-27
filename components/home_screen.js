@@ -18,12 +18,16 @@ import { useNavigation } from "expo-router";
 
 import UseIcons from "./middleware/tools/useIcons";
 import fontNormalize from "./middleware/tools/fontNormalize";
+import { useAuth } from "./middleware/context/authContext";
 
 
 const windowWidth = Dimensions.get("window").width;
 // const windowHeight = Dimensions.get("window").height;
 
 export default function HomeScreen({route}) {
+  const {authData} = useAuth();
+  const {userToken, userData} = authData;
+  console.log("Auth Data Home Screen:", authData);
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
    const dummyArray = Array(3).fill(null).map((_, index) => ({ id: `${index + 1}` }));
