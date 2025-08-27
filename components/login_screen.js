@@ -13,18 +13,28 @@ import {
 
 import { StatusBar } from "expo-status-bar";
 
+import { useAuth } from "./middleware/context/authContext";
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 export default function LoginScreens() {
 
+  const { onLogin } = useAuth();
   const { control, handleSubmit, formState: { errors },} = useForm({
     defaultValues: {
-      usrnm: "",
-      pwd: "",
+      email: "",
+      password: "",
     },
   });
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async(data) =>  {
+    console.log("Login attempt with data: ", data);
+    await onLogin(data.email, data.password);
+    if(result && result.error){
+      console.log("Login Error: ", result);
+    }
+
+  };
 
 
   return (
@@ -59,9 +69,9 @@ export default function LoginScreens() {
                     value={value}
                   />
                 )}
-                name="usrnm"
+                name="email"
               />
-              {errors.usrnm && <Text style={styles.errorTextInput}>Mohon masukkan username anda!</Text>}
+              {errors.email && <Text style={styles.errorTextInput}>Mohon masukkan username anda!</Text>}
             </View>
 
             <View style={styles.loginInput}>
@@ -79,9 +89,9 @@ export default function LoginScreens() {
                     value={value}
                   />
                 )}
-                name="pwd"
+                name="password"
               />
-              {errors.pwd && <Text style={styles.errorTextInput}>Mohon masukkan password anda!</Text>}
+              {errors.password && <Text style={styles.errorTextInput}>Mohon masukkan password anda!</Text>}
             </View>
             <TouchableOpacity
               style={styles.submitButton}
