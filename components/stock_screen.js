@@ -200,7 +200,7 @@ export default function StockScreen({ route }) {
   useEffect(() => {
     const applyFilter = async () => {
       if (selectedFilter != null) {
-        console.log("Selected Filter: ", selectedFilter);
+        // console.log("Selected Filter: ", selectedFilter);
         if (selectedFilter === "0") {
           const dataWithId = await fetchData({unitLayananId: authData.userData.unit_layanan_id});
 
