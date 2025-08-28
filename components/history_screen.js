@@ -12,13 +12,15 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
-import { useNavigation } from "expo-router";
+import axios from "axios";
 
+import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "./middleware/tools/useIcons";
 import fontNormalize from "./middleware/tools/fontNormalize";
+import { useAuth, API_URL } from "./middleware/context/authContext";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -30,6 +32,21 @@ const filterData = [
   { id: "3", filterName: "Laki-laki" },
   { id: "4", filterName: "Perempuan" },
 ];
+const namaBulan = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+];
+const ENDPOINT_URL = "patient/show";
+
+const printDate = (dateString) => {
+  const date = new Date(dateString);
+
+  const year = date.getFullYear();
+  const monthInArray = date.getMonth();
+  const day = date.getDate();
+
+  return `${day} ${namaBulan[monthInArray]} ${year}`;
+}
 
 const diseaseName = "TBC";
 // component for filterData item
@@ -63,16 +80,16 @@ const PatientDataItem = ({ item, onPress, }) => (
   <Pressable style={[styles.patientDataButton]} onPress={onPress}>
     <View>
       <Text style={[styles.normalText, { fontSize: 16 }]}>
-        item.id.name
+        {item.nama_lengkap}
       </Text>
       <View
         style={[{ flexDirection: "row", alignItems: "center" }]}
       >
-        <Text style={[styles.normalText, {fontSize: 12}]}>Laki-laki</Text>
+        <Text style={[styles.normalText, {fontSize: 12}]}>{item.jenis_kelamin == "P" ? "Perempuan" : "Laki-laki"}</Text>
         <Text style={{ fontSize: 16, marginInline: 7 }}>
           •
         </Text>
-        <Text style={[styles.normalText, {fontSize: 12}]}>20th</Text>
+        <Text style={[styles.normalText, {fontSize: 12}]}>{item.umur}th</Text>
       </View>
     </View>
 
@@ -84,9 +101,9 @@ const PatientDataItem = ({ item, onPress, }) => (
       }}
     >
       <View
-        style={[{ flexDirection: "row", alignItems: "center" }]}
+        style={[{ flexShrink: 1, alignItems: "center"}]}
       >
-        <Text style={[styles.italicText, {fontSize: 14, color: "#606060"}]}>Diagnosa: {diseaseName}</Text>
+        <Text style={[styles.italicText, { fontSize: 14, color: "#606060"}]}>Diagnosa: {item.diagnosa}</Text>
       </View>
 
       <View
@@ -101,7 +118,7 @@ const PatientDataItem = ({ item, onPress, }) => (
           />
         </View>
         <View>
-          <Text style={[styles.normalText, {fontSize: 12}]}>21 Juli 2025</Text>
+          <Text style={[styles.normalText, {fontSize: 12}]}>{printDate(item.created_at)}</Text>
         </View>
       </View>
       
@@ -114,12 +131,74 @@ const PatientDataItem = ({ item, onPress, }) => (
 export default function HistoryScreen({ route }) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
+  const { authData } = useAuth();
   const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index + 1}` }));
   console.log(windowHeight, windowWidth);
-
-  const [searchQuery, setSearchQuery] = useState("");
-
+  
   const [selectedFilter, setSelectedFilter] = useState("Semua");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [resultQuery, setResultQuery] = useState();
+  
+  const fetchData = async(filterBySearch) => {
+    try {
+      console.warn("Fetching patient data: ",);
+      const response = await axios.get(`${API_URL}/${ENDPOINT_URL}`);
+      console.log("Data Fetched!")
+      const filteredData = response.data.data.filter(
+        (data) =>
+          data.nomor_rm.toLowerCase().includes(filterBySearch.toLowerCase()) ||
+          data.nama_lengkap.toLowerCase().includes(filterBySearch.toLowerCase()) ||
+          data.diagnosa.toLowerCase().includes(filterBySearch.toLowerCase())
+      )
+      return filteredData;
+    } catch (error) {
+      console.log("There is error check your phone!")
+    }
+  };
+
+  useEffect(() => {
+    const applyFilter = async () => {
+      if (selectedFilter != null) {
+        // console.log("Selected Filter: ", selectedFilter);
+        if (selectedFilter === "Semua") {
+          const fetchedData = await fetchData(searchQuery);
+          setResultQuery(fetchedData);
+          // console.log("Search Query: ", searchQuery);
+        } else if(selectedFilter === "Terbaru") {
+          const fetchedData = await fetchData(searchQuery);
+          const filteredData = [...fetchedData].sort((a, b) => {
+            return b.id - a.id; 
+          });
+          setResultQuery(filteredData);
+        } else if(selectedFilter === "Laki-laki") {
+          const fetchedData = await fetchData(searchQuery);
+          const filteredData = fetchedData.filter(
+            (data) => data.jenis_kelamin === "L"
+          );
+          setResultQuery(filteredData);
+        } else if(selectedFilter === "Perempuan") {
+          const fetchedData = await fetchData(searchQuery);
+          const filteredData = fetchedData.filter(
+            (data) => data.jenis_kelamin === "P"
+          );
+          setResultQuery(filteredData);
+        }else {
+          const dataWithId = await fetchData({medkitId: selectedFilter});
+
+          // Filter using Search Query
+          const filteredData = dataWithId.filter(
+            (data) =>
+              data.obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.satuan_obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.jenis_obat.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          setResultQuery(filteredData);
+        }
+      }
+    }
+    applyFilter();
+  }, [selectedFilter, searchQuery]);
+
   const renderFilterItem = ({ item }) => {
     const backgroundColor =
       item.filterName === selectedFilter ? "#4ACDD1" : "#fff";
@@ -209,7 +288,7 @@ export default function HistoryScreen({ route }) {
               }}
             >
               <FlatList
-                data={dummyArray}
+                data={resultQuery}
                 renderItem={renderPatientDataItem}
                 keyExtractor={(item) => item.id}
                 extraData={selectedFilter}

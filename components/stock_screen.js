@@ -14,11 +14,12 @@ import {
 } from "react-native";
 
 import { StatusBar } from "expo-status-bar";
+import axios from "axios";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "./middleware/tools/useIcons";
 import { useAuth, API_URL } from "./middleware/context/authContext";
-import axios from "axios";
+
 
 
 const windowWidth = Dimensions.get("window").width;
