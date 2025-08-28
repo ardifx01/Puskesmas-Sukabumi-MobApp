@@ -61,7 +61,7 @@ export default function HomeScreen({route}) {
                 <View style={styles.divDetail}>
                   <Text style={[styles.normalText, {fontSize: 14}]}>Puskesmas Sukabumi</Text>
                   <Text style={[styles.medText, { fontSize: 16, color: "#4ACDD1" }]}>
-                    Unit Layanan Gigi & Mulut
+                    Unit Layanan {userData.unit_layanan}
                   </Text>
                   <View
                     style={{
