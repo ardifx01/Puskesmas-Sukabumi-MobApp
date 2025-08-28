@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   StyleSheet,
@@ -17,19 +17,46 @@ import { StatusBar } from "expo-status-bar";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "./middleware/tools/useIcons";
+import { useAuth, API_URL } from "./middleware/context/authContext";
+import axios from "axios";
+
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
-const filterData = [
+const FILTER_DATA = [
   { id: "0", filterName: "Semua" },
-  { id: "1", filterName: "Terbanyak" },
-  { id: "2", filterName: "Sedikit" },
-  { id: "3", filterName: "Expired" },
-  { id: "4", filterName: "Kategori" },
+  { id: "sort-1", filterName: "Terbanyak" },
+  { id: "sort-2", filterName: "Sedikit" },
+  { id: "sort-3", filterName: "Expired" },
+  // { id: "4", filterName: "Kategori" },
 ];
+const ENDPOINT_URL = "medkit/stockView";
 
-const diseaseName = "TBC";
+const createNewFilterData = (emergencyKitsData, unitLayananId) => {
+  // console.log("Creating new filter data with emergencyKitsData: ");
+  // console.log("Filtering emergencyKitsData with unit_layanan_id:", unitLayananId);
+  const filteredData = emergencyKitsData.filter(
+    (item) => item.unit_layanan_id === unitLayananId
+  );
+  // console.log("Filtered Data: ", filteredData);
+
+  // console.log("Mapping filtered data to emergencyFilters...");
+  const emergencyFilters = filteredData.map((item) => ({
+    id: item.id,
+    filterName: item.nama,
+  }));
+  // console.log("Filtered Emergency Filters: ", emergencyFilters);
+
+  // console.log("Combining with existing FILTER_DATA...");
+  const newFilterData = [
+    FILTER_DATA[0],
+    ...emergencyFilters,
+    ...FILTER_DATA.slice(1)
+  ];
+  return newFilterData;
+};
+
 // component for filterData item
 const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) =>
   item.filterName === "filter-alt" ? ( // will change to icon later
@@ -61,15 +88,17 @@ const PatientDataItem = ({
   iconColor,
 }) => (
   <Pressable style={[styles.patientDataButton]} onPress={onPress}>
-    
+
     <View
       style={{
         flexDirection: "row",
         justifyContent: "space-between",
       }}
     >
-      <Text style={[styles.normalText, {fontSize: 16}]}>Paracetamol</Text>
-      <Text style={[styles.normalText, { fontSize: 12 }]}> Tersedia </Text>
+      <Text style={[styles.normalText, { fontSize: 16 }]}>{item.obat}</Text>
+      <Text style={[styles.normalText, { fontSize: 12 }]}>
+        {item.stok > 0 ? "Tersedia" : "Tidak Tersedia"}
+      </Text>
     </View>
 
     <View
@@ -79,13 +108,13 @@ const PatientDataItem = ({
       }}
     >
 
-        <View style={[{ flexDirection: "row", alignItems: "center" }]}>
-          <Text style={[styles.normalText, {fontSize: 12}]}>Kapsul</Text>
-          <Text style={{ fontSize: 16, marginInline: 3.5 }}>•</Text>
-          <Text style={[styles.normalText, {fontSize: 12}]}>Antibiotik</Text>
-        </View>
+      <View style={[{ flexDirection: "row", alignItems: "center" }]}>
+        <Text style={[styles.normalText, { fontSize: 12 }]}>{item.satuan_obat}</Text>
+        <Text style={{ fontSize: 16, marginInline: 3.5 }}>•</Text>
+        <Text style={[styles.normalText, { fontSize: 12 }]}>{item.jenis_obat}</Text>
+      </View>
 
-        <Text style={[styles.normalText, { fontSize: 14 }]}> 15 Pcs </Text>
+      <Text style={[styles.normalText, { fontSize: 14 }]}>{item.stok} Pcs</Text>
 
     </View>
 
@@ -93,24 +122,159 @@ const PatientDataItem = ({
 );
 
 export default function StockScreen({ route }) {
-  const dummyArray = Array(10)
-    .fill(null)
-    .map((_, index) => ({ id: `${index + 1}` }));
-  console.log(route.name);
+  const { authData } = useAuth();
+  const [medkitData, setMedkitData] = useState();
+  const [filterData, setFilterData] = useState(FILTER_DATA);
+
+  useEffect(() => {
+    const fetchMedkitData = async () => {
+      try {
+        // console.log("Fetching medkit data for unit_layanan_id: ");
+        const response = JSON.stringify(await axios.get(`${API_URL}/medkit/show`));
+        // console.log("Parsing Response......");
+        const responseParsed = JSON.parse(response);
+        // console.log("Adding to medkitData state......");
+        setMedkitData(responseParsed.data.medkitData);
+      } catch (error) {
+        console.error("Error fetching medkit data:", error);
+      }
+    };
+    fetchMedkitData();
+  }, []);
+
+  useEffect(() => {
+    // console.log("Medkit Data: ", medkitData);
+    if (medkitData) {
+      // console.log("Medkit Data available, creating new filter data...");
+      const newFilterData = createNewFilterData(medkitData, authData.userData.unit_layanan_id);
+      setFilterData(newFilterData);
+    };
+  }, [medkitData]);
+
+  // This use effect for debugging
+  // useEffect(() => {
+  //   console.log("Filter Data Updated: ", filterData);
+  // }, [filterData]);
+
+  // Used as Dummy for Front-end dev
+  // const dummyArray = Array(10)
+  //   .fill(null)
+  //   .map((_, index) => ({ id: `${index + 1}` }));
+  // console.log("Dummy Array: ",dummyArray);
   const insets = useSafeAreaInsets();
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [resultQuery, setResultQuery] = useState();
+  const [selectedFilter, setSelectedFilter] = useState();
+  useEffect(() => {
+    setSelectedFilter("0");
+  }, []);
 
-  const [selectedFilter, setSelectedFilter] = useState("Terbanyak");
+  const fetchData = async(params = {}) => {
+    try {
+      // console.warn("Fetching medkit data for unit_layanan_id: ");
+      const response = await axios.get(`${API_URL}/${ENDPOINT_URL}`, {
+          params
+        });
+
+      // Add ID to use as Key Extractor on Flatlist
+      const dataWithId = response.data.data.map((item, index) => ({
+        id: String(index),
+        ...item,
+      }));
+      return dataWithId;
+    } catch (error) {
+      console.log("There is error check your phone!")
+    }
+  };
+
+  const getDateNow = () => {
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0'); // +1 karena index bulan mulai dari 0
+    const day = String(today.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+  
+
+  useEffect(() => {
+    const applyFilter = async () => {
+      if (selectedFilter != null) {
+        console.log("Selected Filter: ", selectedFilter);
+        if (selectedFilter === "0") {
+          const dataWithId = await fetchData({unitLayananId: authData.userData.unit_layanan_id});
+
+          // Filter using Search Query
+          const filteredData = dataWithId.filter(
+            (data) =>
+              data.obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.satuan_obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.jenis_obat.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          setResultQuery(filteredData);
+          // console.log("Search Query: ", searchQuery);
+        } else if(selectedFilter === "sort-1" || 
+                  selectedFilter === "sort-2" || 
+                  selectedFilter === "sort-3") {
+                  const dataWithId = await fetchData(
+                    {
+                      unitLayananId: authData.userData.unit_layanan_id
+                    }
+                  );
+                  const filteredData = dataWithId.filter(
+                    (data) =>
+                      data.obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      data.satuan_obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                      data.jenis_obat.toLowerCase().includes(searchQuery.toLowerCase())
+                  );
+                  if(selectedFilter === "sort-1") {
+                    const sortedData = [...filteredData].sort((a, b) => b.stok - a.stok);
+                    setResultQuery(sortedData);
+                  } else if(selectedFilter === "sort-2") {
+                    const sortedData = [...filteredData].sort((a, b) => a.stok - b.stok);
+                    setResultQuery(sortedData);
+                  } else {
+                    const sortedData = filteredData.filter(
+                      (data) => new Date(data.expired) - new Date(getDateNow()) <= 0
+                    );
+                    setResultQuery(sortedData);
+                  }
+                  
+        } else {
+          const dataWithId = await fetchData({medkitId: selectedFilter});
+
+          // Filter using Search Query
+          const filteredData = dataWithId.filter(
+            (data) =>
+              data.obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.satuan_obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.jenis_obat.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          setResultQuery(filteredData);
+        }
+      }
+    }
+    applyFilter();
+  }, [selectedFilter, searchQuery]);
+
+  // This for debugging
+  // useEffect(() => {
+  //   console.log("Result: ", resultQuery);
+  // }, [resultQuery]);
+
+  // useEffect(() => {
+  //   console.log("Search Query: ", searchQuery);
+  // }, [searchQuery]);
+
   const renderFilterItem = ({ item }) => {
     const backgroundColor =
-      item.filterName === selectedFilter ? "#4ACDD1" : "#fff";
-    const color = item.filterName === selectedFilter ? "#fff" : "#4ACDD1";
+      item.id === selectedFilter ? "#4ACDD1" : "#fff";
+    const color = item.id === selectedFilter ? "#fff" : "#4ACDD1";
 
     return (
       <FilterDataItem
         item={item}
-        onPress={() => setSelectedFilter(item.filterName)}
+        onPress={() => setSelectedFilter(item.id)}
         backgroundColor={backgroundColor}
         textColor={color}
       />
@@ -164,7 +328,7 @@ export default function StockScreen({ route }) {
             </View>
           </View>
 
-          <View style={[styles.contentContainer, styles.lowerContent, {marginBlockEnd: insets.bottom + 40}]}>
+          <View style={[styles.contentContainer, styles.lowerContent, { marginBlockEnd: insets.bottom + 40 }]}>
             <View style={[styles.searchBox]}>
               <UseIcons
                 name="search"
@@ -187,7 +351,7 @@ export default function StockScreen({ route }) {
               }}
             >
               <FlatList
-                data={dummyArray}
+                data={resultQuery}
                 renderItem={renderPatientDataItem}
                 keyExtractor={(item) => item.id}
                 extraData={selectedFilter}
