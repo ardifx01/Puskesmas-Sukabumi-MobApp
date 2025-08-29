@@ -53,7 +53,9 @@ export const AuthProvider = ({ children }) => {
                     alert("Conflict !, " + err.response?.data?.message);
                 } else if(err.response?.status === 422) {
                     alert("Unprocessable Content, Reason: " + err.response?.data?.message);
-                } 
+                } else if(err.response?.status === 500) {
+                    alert("TERJADI ERROR PADA SERVER !");
+                }
                 return Promise.reject(err);
             }
         );
@@ -102,12 +104,12 @@ export const AuthProvider = ({ children }) => {
             const response = await axios.post(`${API_URL}/auth`, { 'email':username, 'password':password });
             await SecureStore.setItemAsync(TOKEN_KEY, response.data.token);
             await SecureStore.setItemAsync(USER_DATA, JSON.stringify(response.data.user));
+            axios.defaults.headers.common['Authorization'] = `Bearer ${await SecureStore.getItemAsync(TOKEN_KEY)}`;
             setAuthData({
                 userToken: await SecureStore.getItemAsync(TOKEN_KEY),
                 userData: JSON.parse(await SecureStore.getItemAsync(USER_DATA)),
                 isSignedIn: true,
             });
-            axios.defaults.headers.common['Authorization'] = `Bearer ${await SecureStore.getItemAsync(TOKEN_KEY)}`;
             console.log("Login Success!");
         } catch (error) {
            console.log("There is an error, check alert on phone !"); 
