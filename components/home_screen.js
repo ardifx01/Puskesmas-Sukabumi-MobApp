@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { SafeAreaView, useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   StyleSheet,
@@ -11,6 +11,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
 import axios from "axios";
 
 import { StatusBar } from "expo-status-bar";
@@ -19,18 +20,75 @@ import { useNavigation } from "expo-router";
 
 import UseIcons from "./middleware/tools/useIcons";
 import fontNormalize from "./middleware/tools/fontNormalize";
-import { useAuth } from "./middleware/context/authContext";
+import { useAuth, API_URL } from "./middleware/context/authContext";
 
 
 const windowWidth = Dimensions.get("window").width;
 // const windowHeight = Dimensions.get("window").height;
 
+const ENDPOINT_URL = "patient/show";
+const namaBulan = [
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+];
+
+const printDate = (dateString) => {
+  const convertDate = (date) => {
+    const year = date.getFullYear();
+    const monthInArray = date.getMonth();
+    const day = date.getDate();
+
+    return `${day} ${namaBulan[monthInArray]} ${year}`;
+  }
+  
+  if(dateString) {
+    const date = new Date(dateString);
+    const convertedDate = convertDate(date);
+    return convertedDate;
+  } else {
+    const date = new Date();
+    const convertedDate = convertDate(date);
+    return convertedDate;
+  }
+};
+
 export default function HomeScreen({route}) {
   const {authData} = useAuth();
+  // console.log("From Homescreen: ", authData.userToken);
   const userData = authData.userData;
   const navigation = useNavigation();
+  const isFocused = useIsFocused();
   const insets = useSafeAreaInsets();
-   const dummyArray = Array(3).fill(null).map((_, index) => ({ id: `${index + 1}` }));
+
+  const [resultQuery, setResultQuery] = useState();
+  const [countedPatientToday, setCountedPatientToday] = useState();
+  useEffect(() => {
+    if(isFocused){
+      const fetchData = async() => {
+        try {
+          // console.warn("Fetching patient data: ",);
+          const response = await axios.get(`${API_URL}/${ENDPOINT_URL}`);
+          const filteredData = [...response.data.data].sort((a, b) => {
+            return b.id - a.id; 
+          }).slice(0,3);
+          console.log("From Home Screen: Data Fetched!")
+          setResultQuery(filteredData);
+
+          const today = new Date().toLocaleDateString('sv-SE');
+          const countingPatient = response.data.data.reduce((count, item) => {
+            const targetDate = item.created_at.split("T")[0];
+            if(targetDate === today) {
+              return count + 1
+            } return count;
+          }, 0);
+          setCountedPatientToday(countingPatient);
+        } catch (error) {
+          console.log("There is error check your phone!")
+        }
+      };
+      fetchData();
+    }
+  }, [isFocused]);
 
   return (
     <ImageBackground
@@ -91,7 +149,7 @@ export default function HomeScreen({route}) {
                             { color: "#4ACDD1", fontSize: fontNormalize(20) },
                           ]}
                         >
-                          23
+                          {countedPatientToday}
                         </Text>
                       </View>
                     </View>
@@ -103,6 +161,9 @@ export default function HomeScreen({route}) {
                         style={[
                           styles.datePickerButton,
                           styles.datePickerActive,
+                          {
+                            paddingBlock: 3.5,
+                          }
                         ]}
                       >
                         <Text
@@ -115,7 +176,7 @@ export default function HomeScreen({route}) {
                           Hari ini
                         </Text>
                       </Pressable>
-                      <Pressable
+                      {/* <Pressable
                         style={[
                           styles.datePickerButton,
                           { borderRadius: 16 },
@@ -131,8 +192,8 @@ export default function HomeScreen({route}) {
                         >
                           Kemarin
                         </Text>
-                      </Pressable>
-                      <Pressable
+                      </Pressable> */}
+                      {/* <Pressable
                         style={[
                           {
                             paddingBlock: 6.17,
@@ -148,7 +209,7 @@ export default function HomeScreen({route}) {
                           size={fontNormalize(12)}
                           color="#4ACDD1"
                         />
-                      </Pressable>
+                      </Pressable> */}
                     </View>
                     <Text
                       style={[
@@ -156,7 +217,7 @@ export default function HomeScreen({route}) {
                         styles.normalText,
                       ]}
                     >
-                      21 Juli 2025
+                      {printDate()}
                     </Text>
                   </View>
                 </View>
@@ -230,8 +291,8 @@ export default function HomeScreen({route}) {
                 </Text>
               </View>
               <FlatList
-                data={dummyArray}
-                renderItem={({}) => (
+                data={resultQuery}
+                renderItem={({item}) => (
                   <View
                     style={[
                       { backgroundColor: "#fff" },
@@ -241,7 +302,7 @@ export default function HomeScreen({route}) {
                   >
                     <View>
                       <Text style={[styles.normalText, { fontSize: 16 }]}>
-                        Nama Pasien
+                        {item.nama_lengkap}
                       </Text>
                     </View>
 
@@ -254,11 +315,11 @@ export default function HomeScreen({route}) {
                       <View
                         style={[{ flexDirection: "row", alignItems: "center" }]}
                       >
-                        <Text style={[styles.normalText, {fontSize: 12, color:"#616161"}]}>Laki-laki</Text>
+                        <Text style={[styles.normalText, {fontSize: 12, color:"#616161"}]}>{item.jenis_kelamin == "P" ? "Perempuan" : "Laki-laki"}</Text>
                         <Text style={{ fontSize: 16, marginInline: 7 }}>
                           •
                         </Text>
-                        <Text style={[styles.normalText, {fontSize: 12, color:"#616161"}]}>20th</Text>
+                        <Text style={[styles.normalText, {fontSize: 12, color:"#616161"}]}>{item.umur}th</Text>
                       </View>
 
                       <View
@@ -273,7 +334,7 @@ export default function HomeScreen({route}) {
                           />
                         </View>
                         <View>
-                          <Text style={[styles.normalText, {fontSize: 12}]}>21 Juli 2025</Text>
+                          <Text style={[styles.normalText, {fontSize: 12}]}>{printDate(item.created_at)}</Text>
                         </View>
                       </View>
                     </View>
