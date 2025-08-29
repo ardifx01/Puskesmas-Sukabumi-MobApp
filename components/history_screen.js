@@ -48,7 +48,6 @@ const printDate = (dateString) => {
   return `${day} ${namaBulan[monthInArray]} ${year}`;
 }
 
-const diseaseName = "TBC";
 // component for filterData item
 const FilterDataItem = ({ item, onPress, backgroundColor, textColor }) => (
   item.filterName === "equalizer" ? (
@@ -132,7 +131,6 @@ export default function HistoryScreen({ route }) {
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   const { authData } = useAuth();
-  const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index + 1}` }));
   console.log(windowHeight, windowWidth);
   
   const [selectedFilter, setSelectedFilter] = useState("Semua");
