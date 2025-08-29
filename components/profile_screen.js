@@ -13,6 +13,8 @@ import {
   FlatList,
 } from "react-native";
 
+
+import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 // import { isLoaded, useFonts } from "expo-font";
 
@@ -25,6 +27,7 @@ const windowHeight = Dimensions.get("window").height;
 export default function ProfileScreen({ route }) {
   const insets = useSafeAreaInsets();
   const { authData, onLogout } = useAuth();
+  const navigation = useNavigation();
   const handleLogout = async() => {
     console.log("Logout Handler Pressed !");
     await onLogout();
@@ -44,7 +47,7 @@ export default function ProfileScreen({ route }) {
         <View style={[styles.container, {flex: 1, backgroundColor: ""}]}>
           <View style={[styles.upperContent, styles.contentContainer]}>
             <View style={styles.headerContainer}>
-              <Pressable style={[styles.actionCircleButton]}>
+              <Pressable style={[styles.actionCircleButton]} onPress={() => navigation.goBack()}>
                 <UseIcons
                   name="angle-left"
                   set="FontAwesome6"
