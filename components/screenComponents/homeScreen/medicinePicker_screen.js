@@ -14,11 +14,15 @@ import {
   UIManager,
   Platform,
   Alert,
+  Keyboard,
 } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import Modal from "react-native-modal";
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import { useForm, Controller, useFieldArray } from 'react-hook-form';
+import {Picker} from '@react-native-picker/picker';
+import { KeyboardAwareFlatList } from 'react-native-keyboard-aware-scroll-view';
+import axios from "axios";
 
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -26,32 +30,60 @@ import { LinearGradient } from "expo-linear-gradient";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "../../middleware/tools/useIcons";
+import { useAuth, API_URL } from "../../middleware/context/authContext";
 
 // import data dummy
 import dataObat from "../../../dummyData/dataObat.json";
 
+
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
+
 const windowWidthED = ExtraDimensions.getRealWindowWidth();
 const windowHeightED = ExtraDimensions.getRealWindowHeight();
+
+const ENDPOINT_URL = "medkit/stockView";
+
+const dummyPatientData = {
+  "alamat": "Tokyo",
+  "created_at": "2025-08-29T08:43:19.000000Z",
+  "diagnosa": "Demam",
+  "email": "koyuki.soryu@mail.com",
+  "gol_darah": "AB",
+  "hubungan_kk": "Istri",
+  "id": 125,
+  "jenis_kelamin": "P",
+  "keluhan": "Badan Panas",
+  "nama_kk": "Hakuji",
+  "nama_lengkap": "Koyuki Keizo",
+  "nik": "1201456700",
+  "no_hp": "0897654321",
+  "nomor_rm": "RM777777",
+  "pekerjaan": "Ibu Rumah Tangga",
+  "status_nikah": "Menikah",
+  "tanggal_lahir": "2010-08-25",
+  "tempat_lahir": "Tokyo",
+  "umur": 15,
+  "updated_at": "2025-08-29T08:43:19.000000Z"
+};
 
 // Component for Medicine Entry Item
 const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, formController, handleQuantity }) => (
   <View style={[isCartList === true ? styles.medicineCartEntry : styles.medicineEntry,]}>
     <View style={{ flex: 1 }}>
-      <Text style={[styles.medText, { fontSize: 14 }]}>{item.namaObat}</Text>
+      <Text style={[styles.medText, { fontSize: 14 }]}>{item.obat}</Text>
       <View style={[{ flexDirection: "row", alignItems: "center" }]}>
         <Text style={[styles.normalText, { fontSize: 12 }]}>
-          {item.bentukFisikObat}
+          {item.satuan_obat}
         </Text>
         <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
         <Text style={[styles.normalText, { fontSize: 12 }]}>
-          {item.jenisKhasiatObat}
+          {item.jenis_obat}
         </Text>
       </View>
     </View>
-    {isCartList === true ? (
+    {isCartList === true ? ( // Untuk Cart system list
         <>
       <Controller
         control={formController}
@@ -59,7 +91,7 @@ const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, form
         rules={{
           required: "Wajib",
           min: { value: 0, message: "Min. 0" }, // Ubah min ke 0 agar bisa dihapus
-          max: { value: item.jumlahObat, message: `Max. ${item.jumlahObat}` },
+          max: { value: item.stok, message: `Max. ${item.stok}` },
           pattern: {
             value: /^[0-9]+$/,
             message: "Angka"
@@ -70,14 +102,14 @@ const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, form
             {/* Tombol Kurang */}
             <Pressable
               style={[styles.quantityMinusButton, {marginInlineEnd: 25}]}
-              onPress={() => handleQuantity(index, 'decrement', value, item.jumlahObat)}
+              onPress={() => handleQuantity(index, 'decrement', value, item.stok)}
               disabled={value <= 0} // Nonaktifkan jika 0
             >
               <UseIcons
                 name="minus"
                 set="Entypo"
                 size={13}
-                color="#BBBBBB"
+                color="black"
               />
             </Pressable>
 
@@ -86,7 +118,7 @@ const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, form
               style={[styles.medText, styles.quantityInput, {fontSize: 20},error && styles.inputError]}
               onBlur={onBlur}
               // Saat input manual, panggil handleQuantityChange dengan tipe 'manual'
-              onChangeText={(text) => handleQuantity(index, 'manual', text, item.jumlahObat)}
+              onChangeText={(text) => handleQuantity(index, 'manual', text, item.stok)}
               value={value ? String(value) : ''} // Konversi ke string untuk TextInput
               keyboardType="numeric"
               textAlign="center" // Rata tengah teks input
@@ -95,14 +127,14 @@ const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, form
             {/* Tombol Tambah */}
             <Pressable
               style={[styles.quantityPlusButton, {marginInlineStart: 25}]}
-              onPress={() => handleQuantity(index, 'increment', value, item.jumlahObat)}
-              disabled={value >= item.jumlahObat} // Nonaktifkan jika sudah mencapai stok maksimal
+              onPress={() => handleQuantity(index, 'increment', value, item.stok)}
+              disabled={value >= item.stok} // Nonaktifkan jika sudah mencapai stok maksimal
             >
               <UseIcons
                 name="plus"
                 set="Octicons"
                 size={13}
-                color="#BBBBBB"
+                color={value >= item.stok ? "#888888" : "Black"}
               />
             </Pressable>
 
@@ -112,12 +144,12 @@ const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, form
         )}
       />
         </>    
-      ) : (
+      ) : ( // List obat
         <>
           <View style={{ flex: 1, alignItems: "center" }}>
-            <Text style={[styles.normalText, { fontSize: 12 }]}>{item.jumlahObat > 0 ? "Tersedia" : "Tidak Tersedia"}</Text>
+            <Text style={[styles.normalText, { fontSize: 12 }]}>{item.stok > 0 ? "Tersedia" : "Tidak Tersedia"}</Text>
             <Text style={[styles.medText, { fontSize: 14 }]}>
-              {item.jumlahObat} PCs
+              {item.stok} Pcs
             </Text>
           </View>
           <Pressable
@@ -133,7 +165,11 @@ const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, form
 );
 
 // Component for Confirmation Modal
-const ComfirmationModal = ({isVisible, setVisibility, actionYes}) => (
+const ComfirmationModal = ({isVisible, setVisibility, 
+                            thisModalFor, setThisModalFor, 
+                            medkitData, 
+                            selectedMedkit, setSelectedMedkit,
+                            action}) => (
     <Modal
       isVisible={isVisible}
       statusBarTranslucent={true}
@@ -145,49 +181,179 @@ const ComfirmationModal = ({isVisible, setVisibility, actionYes}) => (
       animationOutTiming={500}
       backdropOpacity={0.3}
     >
-      <View style={[styles.modalContentContainer, {alignItems:"center", justifyContent:"center"}]}>
-        <View style={[styles.modalContentWrapper, {paddingInline: 20, paddingBlock: 31, borderRadius: 16,backgroundColor: "#FFF"}]}> 
-          <View style={[styles.modalContent,{alignItems:"center", justifyContent:"center", gap: 20}]}>
-            <UseIcons
-              name="check-circle-fill"
-              set="Octicons"
-              size={40}
-              color="#ACE8EA"
-            />
-            <View style={{alignItems: "center", gap: 8}}>
-              <Text style={[styles.medText, {fontSize: 16,}]}>Konfirmasi Pemberian Obat?</Text>
-              <Text style={[styles.normalText, {fontSize: 14, textAlign: "center", lineHeight: 14.4}]}>Pastikan obat yang diberikan sudah sesuai sebelum melanjutkan</Text>
-            </View>
+      <View style={
+                    [
+                      styles.modalContentContainer, 
+                      {
+                        alignItems:"center",
+                        justifyContent:"center"
+                      }
+                    ]
+                  }
+      >
+        {
+          thisModalFor === "confirmation" ? (  // Modal for Submission Confirmation
+            <View style={[styles.modalContentWrapper, {paddingInline: 20, paddingBlock: 31, borderRadius: 16,backgroundColor: "#FFF"}]}> 
+              <View style={[styles.modalContent,{alignItems:"center", justifyContent:"center", gap: 20}]}>
+                <UseIcons
+                  name="check-circle-fill"
+                  set="Octicons"
+                  size={40}
+                  color="#ACE8EA"
+                />
+                <View style={{alignItems: "center", gap: 8}}>
+                  <Text style={[styles.medText, {fontSize: 16,}]}>Konfirmasi Pemberian Obat?</Text>
+                  <Text style={[styles.normalText, {fontSize: 14, textAlign: "center", lineHeight: 14.4}]}>Pastikan obat yang diberikan sudah sesuai sebelum melanjutkan</Text>
+                </View>
 
-            <View style={{flexDirection: "row", gap: 10}}>
-              <Pressable
-                style={[styles.button, styles.negativeButton]}
-                onPress={() => {setVisibility(false)}}
-              >
-                <Text style={[styles.medText,{fontSize: 12, color:"#4ACDD1"}]}>Batal</Text>
-              </Pressable>
-              <Pressable
-                style={[styles.button, styles.positiveButton]}
-                onPress={()=> {
-                  actionYes();
-                  setVisibility(false);
-                }}
-              >
-                <Text style={[styles.medText,{fontSize: 12, color:"#FFF"}]}>Konfirmasi</Text>
-              </Pressable>
+                <View style={{flexDirection: "row", gap: 10}}>
+                  <Pressable
+                    style={[styles.button, styles.negativeButton, {borderRadius: 10, height: 28, paddingBlock: 0}]}
+                    onPress={() => {setVisibility(false)}}
+                  >
+                    <Text style={[styles.medText,{fontSize: 12, color:"#4ACDD1"}]}>Batal</Text>
+                  </Pressable>
+                  <Pressable
+                    style={[styles.button, styles.positiveButton, {borderRadius: 10, height: 28, paddingBlock: 0}]}
+                    onPress={()=> {
+                      action();
+                      setVisibility(false);
+                    }}
+                  >
+                    <Text style={[styles.medText,{fontSize: 12, color:"#FFF"}]}>Konfirmasi</Text>
+                  </Pressable>
+                </View>
+              </View>
             </View>
-          </View>
-        </View>
+          ) : ( // Modal for choosing Emergency Kits Source
+            <View style={[styles.modalContentWrapper, {paddingInline: 20, paddingBlock: 31, borderRadius: 16,backgroundColor: "#FFF"}]}> 
+              <View style={[styles.modalContent,{alignItems:"center", justifyContent:"center", gap: 20, paddingInline: 12}]}>
+                <View style={{alignItems: "center", gap: 8}}>
+                  <Text style={[styles.medText, {fontSize: 16,}]}>Mau ambil obat dari mana?</Text>
+                  <Text style={[styles.normalText, {fontSize: 14, textAlign: "center", lineHeight: 14.4}]}>Pilih dari Emergency Kit yang mana, anda akan mengambil obat untuk pasien</Text>
+                </View>
+
+                <View style={[styles.medkitSelection, {flexDirection: "row", alignItems: "center", borderWidth: 1, borderColor: "#4ACDD1", borderRadius: 15, overflow: "hidden"}]}>
+                  <Picker
+                    selectedValue={selectedMedkit}
+                    onValueChange={(itemValue, itemIndex) => setSelectedMedkit(itemValue)}
+                    style={{ flex: 1 }}
+                    mode="dropdown"
+                  >
+                    <Picker.Item label="-- Pilih Medkit --" value="" />
+                    {medkitData.map((item) => (
+                      <Picker.Item key={item.id} label={item.nama} value={item.id}/>
+                    ))}
+                  </Picker>
+                  <Pressable
+                    style={[styles.button, styles.positiveButton, {backgroundColor: selectedMedkit === "" || selectedMedkit === undefined ? "#888888" : "#4ACDD1"}]}
+                    onPress={()=> {
+                      setVisibility(false);
+                      setThisModalFor("confirmation");
+                    }}
+                    disabled={selectedMedkit === undefined || selectedMedkit === ""}
+                  >
+                      <UseIcons name="arrow-right" set="FontAwesome6" 
+                                size={14} color="white"
+                      />
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+          )
+        }
       </View>
     </Modal>
 );
 
 // Default export
 export default function MedicinePicker({ route }) {
+  const {authData} = useAuth();
+  const userData =  authData.userData;
+  const [isKeyboardAppear, setIsKeyboardAppear] = useState(false);
+  const [keyboardHeight, setKeyboardHeight] = useState(0);
+  useEffect(() => {
+    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', (k) => {
+      setIsKeyboardAppear(false);
+      setKeyboardHeight(k.endCoordinates.height);
+    });
+
+    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', (k) => {
+      setIsKeyboardAppear(true);
+      setKeyboardHeight(k.endCoordinates.height);
+    });
+    return () => {
+      keyboardDidHideListener.remove(); // Membersihkan event listener saat komponen dilepas
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+  // useEffect(() => { // Debugging keyboard
+  //   console.log("Is Keyboard Appear? ", isKeyboardAppear);
+  //   if(isKeyboardAppear) {
+  //     console.log("Keyboard Height: ", keyboardHeight);
+  //   };
+  // }, [isKeyboardAppear])
+
+  const [requestRefresh, setRequestRefresh] = useState(false);
+  const [medkitData, setMedkitData] = useState();
+  const [selectedMedkit, setSelectedMedkit] = useState();
+  const [medicineData, setMedicineData] = useState();
+  useEffect(() => {
+    const fetchMedkitData = async() => {
+      try {
+        // console.log("Fetching medkit data for unit_layanan_id: ");
+        const response = await axios.get(`${API_URL}/medkit/show`);
+        // console.log("Adding to medkitData state......");
+        //console.log("Medkit Data: ", response.data.medkitData);
+        const filteredMedkitData = response.data.medkitData.filter(
+          (item) => item.unit_layanan_id === userData.unit_layanan_id
+        );
+        //console.log("Filtered Medkit Data: ", filteredMedkitData);
+        setMedkitData(filteredMedkitData);
+      } catch (error) {
+        console.error("Error fetching medkit data:", error);
+      }
+    };
+    fetchMedkitData();
+  }, []); 
+
+  const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => { // Fetching Medicine Data by Emergency Kit ID
+    console.log("Selected Medkit ID: ", selectedMedkit);
+    if(selectedMedkit) {
+      const fetchMedicineData = async() => {
+        
+        try {
+          const response = await axios.get(`${API_URL}/${ENDPOINT_URL}`,
+                          {
+                            params: {medkitId: selectedMedkit}
+                          }
+          );
+          //console.log("Medicine RAW data: ", response.data.data)
+          const filteredData= response.data.data.filter(
+            (data) =>
+              data.obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.satuan_obat.toLowerCase().includes(searchQuery.toLowerCase()) ||
+              data.jenis_obat.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+          // console.log("Medicine Filtered by Search Keyword: ", filteredData);
+          setMedicineData(filteredData);
+          if(requestRefresh) {
+            setRequestRefresh(false);
+          }
+        } catch (error) { 
+          console.log("There is an Error, Please Check Your Phone!");
+        }
+      };
+      fetchMedicineData();
+    }
+  }, [selectedMedkit, searchQuery, requestRefresh]);
+
   const navigation = useNavigation();
   const insets = useSafeAreaInsets();
   console.log("Window Width: ", windowWidth, ",Window Height: ", windowHeight, " from Dimension");
   console.log("Window Width: ", windowWidthED, ",Window Height: ", windowHeightED, " from ExtraDimension");
+  
 
   const { control, handleSubmit, setValue, getValues } = useForm({
     defaultValues: {
@@ -202,69 +368,99 @@ export default function MedicinePicker({ route }) {
   });
 
   const addToMedList = (obat) => {
-    const existingIndex = fields.findIndex(item => item.id === obat.id); // Checking is Medicine already on list or not
+    const existingIndex = fields.findIndex(item => item.obat_id === obat.obat_id); // Checking is Medicine already on list or not
 
     if (existingIndex > -1) {
       const currentQuantity = getValues(`selectedMedicines.${existingIndex}.selectedQuantity`);
       const newQuantity = currentQuantity + 1;
 
-      // Validasi agar tidak melebihi stok asli
-      if (newQuantity > obat.jumlahObat) {
-        Alert.alert("Stok Habis", `Maaf, stok ${obat.namaObat} hanya tersedia ${obat.jumlahObat} PCs.`);
+      if (newQuantity > obat.stok) {
+        Alert.alert("Stok Habis", `Maaf, stok ${obat.obat} hanya tersedia ${obat.stok} PCs.`);
         return;
       }
       setValue(`selectedMedicines.${existingIndex}.selectedQuantity`, newQuantity);
     } else {
-      if (obat.jumlahObat <= 0) {
-        Alert.alert("Maaf", `${obat.namaObat} tidak tersedia saat ini.`);
+      if (obat.stok <= 0) {
+        Alert.alert("Maaf", `${obat.obat} tidak tersedia saat ini.`);
         return;
       }
       append({
         ...obat,
-        selectedQuantity: 1 // Kuantitas awal saat ditambahkan
+        selectedQuantity: 1
       });
     }
   };
 
   const medicineQuantityChange = (index, type, currentValue, maxStock) => {
-    let newQuantity = parseInt(currentValue) || 0; // Pastikan ini angka, default 0 jika input kosong/invalid
+    let newQuantity = parseInt(currentValue) || 0;
 
     if (type === 'increment') {
       newQuantity += 1;
     } else if (type === 'decrement') {
       newQuantity -= 1;
     }
-
-    // Validasi: kuantitas tidak boleh melebihi stok
+    
     if (newQuantity > maxStock) {
       Alert.alert("Stok Habis", `Kuantitas maksimal adalah ${maxStock} PCs.`);
-      newQuantity = maxStock; // Kembalikan ke stok maksimal
+      newQuantity = maxStock;
     }
+    console.log("Kuantitas obat sekarang: ", newQuantity);
 
-    // Jika kuantitas menjadi 0, hapus item dari keranjang
-    if (newQuantity <= 0) { // Gunakan <= 0 untuk menangani input manual 0 juga
+
+    if (newQuantity <= 0) {
       remove(index);
     } else {
-      // Perbarui nilai kuantitas di react-hook-form
       setValue(`selectedMedicines.${index}.selectedQuantity`, newQuantity);
     }
   };
 
-  const onSubmitCart = (data) => {
-    Alert.alert("Data Keranjang yang Disimpan:", JSON.stringify(data.selectedMedicines, null, 2), [
-      {
-        text: "OK",
-        onPress: () => {
-          // Lakukan sesuatu setelah menyimpan, misalnya reset keranjang
-          setValue('selectedMedicines', []); // Mengosongkan keranjang
+  const onSubmitCart = async(data) => {
+    try {
+      const createRetrieval = await axios.post(`${API_URL}/medicine/createRetrieval`,
+                              {
+                                emergency_kit_id: selectedMedkit,
+                                pasien_id: dummyPatientData.id,
+                                keterangan: `Pengambilan Obat untuk Pasien ${dummyPatientData.nama_lengkap}`
+                              }
+      );
+      console.log("Creating Retrival Medicine Success !, data: ",createRetrieval.data);
+      for(const item of data.selectedMedicines) {
+        try {
+          console.log("Obat Id, ", item.obat_id);
+          const getMedicine = await axios.put(`${API_URL}/medkit/getMedicine`,
+                          {
+                            pengambilan_id: createRetrieval.data.data.id,
+                            jumlah: item.selectedQuantity,
+                            keterangan: `Pengambilan Obat untuk Pasien ${dummyPatientData.nama_lengkap}`,
+                            obatId: item.obat_id,
+                          }
+          );
+          console.log(`Submitting Data for ${item.obat} success !, detail: `, getMedicine.data);
+        } catch(error) {
+          console.log(`There is an Error while Submitting Data for ${item.obat}, Check your phone or console log !`, error);
         }
-      }
-    ]);
-    // Di sini Anda bisa mengirimkan data ke API atau database
+      };
+      Alert.alert(
+        "Berhasil Upload!", // Title
+        "Data telah terunggah ke server dan database", // isi pesan, jan sampe kosong -> memicu error ReactNativeReadableArray
+        [
+          {
+            text: "OK",
+            onPress: () => {
+              setValue('selectedMedicines', []);
+              setRequestRefresh(true);
+            }
+          }
+        ]
+      );
+    } catch (error) {
+      console.log("There is an Error while Creating Medicine Retrieval, Check your phone or console log !")
+    }
   };
 
-  const [isModalVisible, setModalVisible] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [isModalVisible, setModalVisible] = useState(true);
+  const [modalMode, setModalMode] = useState("choose-medkitId");
+
   const filteredDataObat = dataObat.filter(
     (obat) =>
       obat.namaObat.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -272,8 +468,7 @@ export default function MedicinePicker({ route }) {
       obat.jenisKhasiatObat.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const [isMedicineHasBeenChoosen, setIsMedicineHasBeenChoosen] =
-    useState(false);
+  const [isMedicineHasBeenChoosen, setIsMedicineHasBeenChoosen] = useState(false);
 
   const renderMedicineEntry = ({ item }) => {
     return (
@@ -290,7 +485,19 @@ export default function MedicinePicker({ route }) {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: "#F7F9FC", }}>
     
-      <ComfirmationModal isVisible={isModalVisible} setVisibility={setModalVisible} actionYes={handleSubmit(onSubmitCart)}/>
+    {
+    medkitData && 
+      <ComfirmationModal isVisible={isModalVisible} 
+                          setVisibility={setModalVisible}
+                          thisModalFor={modalMode} 
+                          setThisModalFor={setModalMode} 
+                          action={handleSubmit(onSubmitCart)}
+                          medkitData={medkitData}
+                          selectedMedkit={selectedMedkit}
+                          setSelectedMedkit={setSelectedMedkit}
+      />
+    }
+
       <View style={[{flex: 1},styles.container]}>
         <View style={[styles.upperContent]}>
           <View style={styles.headerContainer}>
@@ -326,7 +533,7 @@ export default function MedicinePicker({ route }) {
           <View
             style={[
               styles.medicineListWrapper,
-              { flex: 1, gap: 20, paddingInline: 16 },
+              { flex: 1, gap: 10, paddingInline: 16 },
             ]}
           >
             <View style={[styles.searchBox]}>
@@ -343,17 +550,35 @@ export default function MedicinePicker({ route }) {
                 style={{ paddingInlineEnd: "10%" }}
               />
             </View>
+            {(medkitData && modalMode === "confirmation") && 
+              <View style={{ gap: 20, }}>
+                <View style={{borderRadius: 10, backgroundColor: "#4ACDD1" }}>
+                  <Picker
+                    selectedValue={selectedMedkit}
+                    onValueChange={(itemValue, itemIndex) => {setSelectedMedkit(itemValue); setRequestRefresh(true);}}
+                    style={{ width: "100%", color: "white"}}
+                    mode="dropdown"
+                  >
+                    {medkitData.map((item) => (
+                      <Picker.Item key={item.id} label={item.nama} value={item.id}/>
+                    ))}
+                  </Picker>
+                </View>
+                {!requestRefresh && 
+                <FlatList
+                  data={medicineData}
+                  renderItem={renderMedicineEntry}
+                  keyExtractor={(item) => item.obat_id}
+                  showsVerticalScrollIndicator={true}
+                  contentContainerStyle={{ gap: 8, paddingBlockEnd: 8}}
+                />
+                }
 
-            <FlatList
-              data={filteredDataObat}
-              renderItem={renderMedicineEntry}
-              keyExtractor={(item) => item.id}
-              showsVerticalScrollIndicator={true}
-              contentContainerStyle={{ gap: 8, paddingBlockEnd: 8}}
-              
-            />
+              </View>
+            }
+
           </View>
-          <View style={[styles.medicineCartWrapper]}>
+          <View style={[styles.medicineCartWrapper, {marginBottom: keyboardHeight}]}>
             <View>
               <Text style={[styles.normalText, {fontSize: 14}]}>Daftar Resep Obat</Text>
               {fields.length > 0 && (
@@ -376,6 +601,7 @@ export default function MedicinePicker({ route }) {
               </Text>
             </Pressable>
           </View>
+
         </View>
 
         <StatusBar style="auto" />
@@ -496,9 +722,8 @@ const styles = StyleSheet.create({
     backgroundColor: "#4ACDD1",
   },
   button: {
-    height: 28, 
-    paddingInline: 12, 
-    borderRadius: 8, 
+    paddingInline: 12,
+    paddingBlock: 17, 
     justifyContent:"center",
     alignItems: "center"
   },
@@ -511,4 +736,11 @@ const styles = StyleSheet.create({
     borderColor: "#4ACDD1", 
     backgroundColor: "#4ACDD1"
   },
+  formInput: {
+    borderWidth: 1,
+    borderColor: "#EDEDED",
+    borderRadius: 12,
+    justifyContent: "center",
+    paddingLeft: 10,
+  }
 });
