@@ -133,6 +133,7 @@ export default function HistoryScreen({ route }) {
   const { authData } = useAuth();
   console.log(windowHeight, windowWidth);
   
+  const [requestRefresh, setRequestRefresh] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("Semua");
   const [searchQuery, setSearchQuery] = useState("");
   const [resultQuery, setResultQuery] = useState();
@@ -192,10 +193,13 @@ export default function HistoryScreen({ route }) {
           );
           setResultQuery(filteredData);
         }
-      }
+      };
+      if(requestRefresh) {
+        setRequestRefresh(false);
+      };
     }
     applyFilter();
-  }, [selectedFilter, searchQuery]);
+  }, [selectedFilter, searchQuery, requestRefresh]);
 
   const renderFilterItem = ({ item }) => {
     const backgroundColor =
@@ -205,7 +209,7 @@ export default function HistoryScreen({ route }) {
     return (
       <FilterDataItem
         item={item}
-        onPress={() => setSelectedFilter(item.filterName)}
+        onPress={() => {setSelectedFilter(item.filterName); setRequestRefresh(true);}}
         backgroundColor={backgroundColor}
         textColor={color}
       />
@@ -285,14 +289,17 @@ export default function HistoryScreen({ route }) {
                 flexDirection: "column",paddingBlockStart: 24,
               }}
             >
-              <FlatList
-                data={resultQuery}
-                renderItem={renderPatientDataItem}
-                keyExtractor={(item) => item.id}
-                extraData={selectedFilter}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 12, paddingBlockEnd: 380}}
-              />
+              {!requestRefresh &&
+                <FlatList
+                  data={resultQuery}
+                  renderItem={renderPatientDataItem}
+                  keyExtractor={(item) => item.id}
+                  extraData={selectedFilter}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 12, paddingBlockEnd: 380}}
+                />
+              }
+
             </View>
 
           </View>

@@ -126,6 +126,7 @@ export default function StockScreen({ route }) {
   const { authData } = useAuth();
   const [medkitData, setMedkitData] = useState();
   const [filterData, setFilterData] = useState(FILTER_DATA);
+  const [requestRefresh, setRequestRefresh] = useState(false);
 
   useEffect(() => {
     const fetchMedkitData = async () => {
@@ -253,10 +254,13 @@ export default function StockScreen({ route }) {
           );
           setResultQuery(filteredData);
         }
-      }
+      };
+      if(requestRefresh){
+        setRequestRefresh(false);
+      };
     }
     applyFilter();
-  }, [selectedFilter, searchQuery]);
+  }, [selectedFilter, searchQuery, requestRefresh]);
 
   // This for debugging
   // useEffect(() => {
@@ -275,7 +279,7 @@ export default function StockScreen({ route }) {
     return (
       <FilterDataItem
         item={item}
-        onPress={() => setSelectedFilter(item.id)}
+        onPress={() => {setSelectedFilter(item.id); setRequestRefresh(true); }}
         backgroundColor={backgroundColor}
         textColor={color}
       />
@@ -351,14 +355,17 @@ export default function StockScreen({ route }) {
                 paddingBlockStart: 24,
               }}
             >
-              <FlatList
-                data={resultQuery}
-                renderItem={renderPatientDataItem}
-                keyExtractor={(item) => item.id}
-                extraData={selectedFilter}
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ gap: 12, paddingBlockEnd: insets.bottom }}
-              />
+              {!requestRefresh &&
+                <FlatList
+                  data={resultQuery}
+                  renderItem={renderPatientDataItem}
+                  keyExtractor={(item) => item.id}
+                  extraData={selectedFilter}
+                  showsVerticalScrollIndicator={false}
+                  contentContainerStyle={{ gap: 12, paddingBlockEnd: insets.bottom }}
+                />       
+              }
+
             </View>
           </View>
 
