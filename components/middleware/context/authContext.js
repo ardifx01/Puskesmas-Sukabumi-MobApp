@@ -66,6 +66,8 @@ export const AuthProvider = ({ children }) => {
             if (token) {
                 console.log('Token found:', token);
                 axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+                axios.defaults.headers.common['ngrok-skip-browser-warning'] = true;
+                axios.defaults.timeout = 10000; // for development only
                 console.log("Checking token validity...");
                 try {
                     const tokenStatus = await axios.post(
