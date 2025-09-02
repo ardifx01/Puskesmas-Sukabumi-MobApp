@@ -16,6 +16,8 @@ import {
 } from "react-native";
 import Collapsible from "react-native-collapsible";
 import { FlatList } from "react-native-gesture-handler";
+import axios from "axios";
+
 
 import { useNavigation } from "expo-router";
 import { StatusBar } from "expo-status-bar";
@@ -23,9 +25,11 @@ import { LinearGradient } from "expo-linear-gradient";
 // import { isLoaded, useFonts } from "expo-font";
 
 import UseIcons from "../../middleware/tools/useIcons";
+import { useAuth, API_URL } from "../../middleware/context/authContext";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
+const ENDPOINT_URL = "patient/getHistory";
 
 
 // Component for Accordion
@@ -109,12 +113,37 @@ const HistoryList = React.memo(({item}) => (
 
       <View>
         <Text style={[styles.normalText, { fontSize: 18 }]}>
-          {item.id}
+          {item.tanggal}
         </Text>
       </View>
     </View>
 
-    <View style={{ gap: 8 }}>
+    <FlatList
+      data={item.riwayatPemeriksaan} // Data Source
+      renderItem={({item: dataPemeriksaan}) => (
+        <View style={{ borderTopWidth: 1, borderColor: "#EDEDED", paddingBlockStart: 10 }}>
+          <Text style={[styles.italicText, { fontSize: 14, color: "#606060"}]}>Nomor Pemeriksaan : #{dataPemeriksaan.id}</Text>
+          <View style={{ gap: 8 }}>
+            <Text style={[styles.normalText, { fontSize: 18 }]}>
+              Keluhan :<Text style={[styles.medText]}> {dataPemeriksaan.keluhan}</Text>
+            </Text>
+            <Text style={[styles.normalText, { fontSize: 18 }]}>
+              Diagnosa :<Text style={[styles.medText]}> {dataPemeriksaan.diagnosa}</Text>
+            </Text>
+          </View>
+          <AccordionItem
+            title="Daftar Resep Obat"
+          />
+        </View>
+
+      )}
+      keyExtractor={(dataPemeriksaan) => dataPemeriksaan.id}
+      // Properti untuk mengontrol performa FlatList
+      initialNumToRender={3} // Jumlah item awal yang dirender
+      showsVerticalScrollIndicator={true} // Sembunyikan scroll indicator jika tidak diinginkan
+      contentContainerStyle={{gap: 35}}
+    />
+    {/* <View style={{ gap: 8 }}>
       <Text style={[styles.normalText, { fontSize: 18 }]}>
         Pemeriksa :<Text style={[styles.medText]}> Dr. Keqing</Text>
       </Text>
@@ -124,18 +153,53 @@ const HistoryList = React.memo(({item}) => (
       <Text style={[styles.normalText, { fontSize: 18 }]}>
         Diagnosa :<Text style={[styles.medText]}> TBC</Text>
       </Text>
-    </View>
+    </View> */}
 
-    <AccordionItem
-      title="Daftar Resep Obat"
-    />
+
   </View>
 ));
 
 // Default export
 export default function DetailPatientScreen({ route }) {
+  const authData = useAuth();
+  const patientData = route.params;
+  console.log("Patient Data: ", patientData);
   const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index}` }));
+  const [patientHistory, setPatientHistory] = useState();
+
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const fetchPatientHistoryData = async() => {
+      try {
+        const response = await axios.get(`${API_URL}/patient/show`)
+        const getPatientData = response.data.data.filter(
+          item => item.nama_lengkap.toLowerCase().includes(patientData.nama_lengkap.toLowerCase())
+        );
+        const groupPatientDataByDate = getPatientData.reduce((accumulator, item) => {
+          const date = item.created_at.split("T")[0];
+          if(!accumulator[date]) {
+            accumulator[date] = [];
+          }
+          accumulator[date].push(item);
+          return accumulator;
+        }, {});
+        const transformToArray = Object.keys(groupPatientDataByDate).map(tanggal => ({
+          tanggal,
+          riwayatPemeriksaan: groupPatientDataByDate[tanggal]
+        }));
+        console.log('Grouped Data by Date',transformToArray);
+        setPatientHistory(transformToArray);
+      } catch (error) {
+        console.log ("There is an Error while fetching Patient History Data, ", error);
+      }
+    };
+    fetchPatientHistoryData();
+  }, []);
+
+  useEffect(() => {
+    console.log("Patient Data History: ", patientHistory);
+  }, [patientHistory]);
 
   const renderDataHistory = ({item}) => {
     return (
@@ -175,22 +239,22 @@ export default function DetailPatientScreen({ route }) {
         <View style={[styles.lowerContent]}>
           <View style={{ marginBlockEnd: 16 }}>
             <Text style={[styles.medText, { fontSize: 24 }]}>
-              Nurroni
+              {patientData.nama_lengkap}
             </Text>
             <View style={[{ flexDirection: "row", alignItems: "center" }]}>
               <Text style={[styles.normalText, { fontSize: 16 }]}>
-                Laki-laki
+                {patientData.jenis_kelamin === "L" ? "Laki-laki" : "Perempuan"}
               </Text>
               <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-              <Text style={[styles.normalText, { fontSize: 16 }]}>22th</Text>
+              <Text style={[styles.normalText, { fontSize: 16 }]}>{patientData.umur}th</Text>
             </View>
           </View>
 
           <View style={{flex: 1}}>
             <FlatList
-              data={dummyArray}
+              data={patientHistory}
               renderItem={renderDataHistory}
-              keyExtractor={(item) => item.id}
+              keyExtractor={(item) => item.tanggal}
               showsVerticalScrollIndicator={true}
               initialNumToRender={10}
               maxToRenderPerBatch={15}
