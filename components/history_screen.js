@@ -221,7 +221,7 @@ export default function HistoryScreen({ route }) {
       <PatientDataItem
         item={item}
         onPress={() => {
-          navigation.navigate("detail-patient");
+          navigation.navigate("detail-patient", item);
         }}
         backgroundColor="#fff"
         textColor="#000"
