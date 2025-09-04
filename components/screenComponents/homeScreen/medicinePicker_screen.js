@@ -32,10 +32,6 @@ import { LinearGradient } from "expo-linear-gradient";
 import UseIcons from "../../middleware/tools/useIcons";
 import { useAuth, API_URL } from "../../middleware/context/authContext";
 
-// import data dummy
-import dataObat from "../../../dummyData/dataObat.json";
-
-
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
@@ -44,29 +40,6 @@ const windowWidthED = ExtraDimensions.getRealWindowWidth();
 const windowHeightED = ExtraDimensions.getRealWindowHeight();
 
 const ENDPOINT_URL = "medkit/stockView";
-
-const dummyPatientData = {
-  "alamat": "Tokyo",
-  "created_at": "2025-08-29T08:43:19.000000Z",
-  "diagnosa": "Demam",
-  "email": "koyuki.soryu@mail.com",
-  "gol_darah": "AB",
-  "hubungan_kk": "Istri",
-  "id": 125,
-  "jenis_kelamin": "P",
-  "keluhan": "Badan Panas",
-  "nama_kk": "Hakuji",
-  "nama_lengkap": "Koyuki Keizo",
-  "nik": "1201456700",
-  "no_hp": "0897654321",
-  "nomor_rm": "RM777777",
-  "pekerjaan": "Ibu Rumah Tangga",
-  "status_nikah": "Menikah",
-  "tanggal_lahir": "2010-08-25",
-  "tempat_lahir": "Tokyo",
-  "umur": 15,
-  "updated_at": "2025-08-29T08:43:19.000000Z"
-};
 
 // Component for Medicine Entry Item
 const MedicineEntryItem = ({ item, index, action, isCartList, addToMedList, formController, handleQuantity }) => (
@@ -270,6 +243,33 @@ const ComfirmationModal = ({isVisible, setVisibility,
 export default function MedicinePicker({ route }) {
   const {authData} = useAuth();
   const userData =  authData.userData;
+  const patientId = route.params?.patientId;
+  const prevScreen = route.params?.fromScreen;
+  console.log("Patient ID: ", patientId);
+  const [patientData, setPatientData] = useState();
+  useEffect(() => {
+    const fetchPatientData = async() => {
+      console.log("Fetching Patient Data.....")
+      try {
+        const response = await axios.get(`${API_URL}/patient/show`,{
+                          params: {
+                            patientId: patientId
+                          }
+                        }
+        )
+        console.log("Fetching Success !");
+        setPatientData(response.data.data);
+      } catch(error) {
+        console.log("There is an Error while Fetching Patient Data: ", error);
+      }
+    };
+    fetchPatientData();
+  }, [])
+
+  useEffect(() => {
+    console.log("Patient Data: ", patientData);
+  }, [patientData]);
+
   const [isKeyboardAppear, setIsKeyboardAppear] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
   useEffect(() => {
@@ -350,9 +350,9 @@ export default function MedicinePicker({ route }) {
   }, [selectedMedkit, searchQuery, requestRefresh]);
 
   const navigation = useNavigation();
-  const insets = useSafeAreaInsets();
-  console.log("Window Width: ", windowWidth, ",Window Height: ", windowHeight, " from Dimension");
-  console.log("Window Width: ", windowWidthED, ",Window Height: ", windowHeightED, " from ExtraDimension");
+  const screenState = navigation.getState();
+  // console.log("Window Width: ", windowWidth, ",Window Height: ", windowHeight, " from Dimension");
+  // console.log("Window Width: ", windowWidthED, ",Window Height: ", windowHeightED, " from ExtraDimension");
   
 
   const { control, handleSubmit, setValue, getValues } = useForm({
@@ -419,8 +419,8 @@ export default function MedicinePicker({ route }) {
       const createRetrieval = await axios.post(`${API_URL}/medicine/createRetrieval`,
                               {
                                 emergency_kit_id: selectedMedkit,
-                                pasien_id: dummyPatientData.id,
-                                keterangan: `Pengambilan Obat untuk Pasien ${dummyPatientData.nama_lengkap}`
+                                pasien_id: patientData.id,
+                                keterangan: `Pengambilan Obat untuk Pasien ${patientData.nama_lengkap}`
                               }
       );
       console.log("Creating Retrival Medicine Success !, data: ",createRetrieval.data);
@@ -431,7 +431,7 @@ export default function MedicinePicker({ route }) {
                           {
                             pengambilan_id: createRetrieval.data.data.id,
                             jumlah: item.selectedQuantity,
-                            keterangan: `Pengambilan Obat untuk Pasien ${dummyPatientData.nama_lengkap}`,
+                            keterangan: `Pengambilan Obat untuk Pasien ${patientData.nama_lengkap}`,
                             obatId: item.obat_id,
                           }
           );
@@ -448,7 +448,11 @@ export default function MedicinePicker({ route }) {
             text: "OK",
             onPress: () => {
               setValue('selectedMedicines', []);
-              setRequestRefresh(true);
+              if(prevScreen === "patient-submission") {
+                navigation.replace(screenState.routes[0].name);
+              } else if(prevScreen === "detail-patient") {
+                navigation.goBack();
+              }
             }
           }
         ]
@@ -460,14 +464,6 @@ export default function MedicinePicker({ route }) {
 
   const [isModalVisible, setModalVisible] = useState(true);
   const [modalMode, setModalMode] = useState("choose-medkitId");
-
-  const filteredDataObat = dataObat.filter(
-    (obat) =>
-      obat.namaObat.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      obat.bentukFisikObat.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      obat.jenisKhasiatObat.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   const [isMedicineHasBeenChoosen, setIsMedicineHasBeenChoosen] = useState(false);
 
   const renderMedicineEntry = ({ item }) => {
@@ -550,21 +546,22 @@ export default function MedicinePicker({ route }) {
                 style={{ paddingInlineEnd: "10%" }}
               />
             </View>
-            {(medkitData && modalMode === "confirmation") && 
+            {(medkitData) && 
               <View style={{ gap: 20, }}>
                 <View style={{borderRadius: 10, backgroundColor: "#4ACDD1" }}>
                   <Picker
                     selectedValue={selectedMedkit}
-                    onValueChange={(itemValue, itemIndex) => {setSelectedMedkit(itemValue); setRequestRefresh(true);}}
+                    onValueChange={(itemValue, itemIndex) => {setSelectedMedkit(itemValue); setModalMode("confirmation"); setRequestRefresh(true);  }}
                     style={{ width: "100%", color: "white"}}
                     mode="dropdown"
                   >
+                    <Picker.Item label={"-- Pilih Medkit --"} value={""}/>
                     {medkitData.map((item) => (
                       <Picker.Item key={item.id} label={item.nama} value={item.id}/>
                     ))}
                   </Picker>
                 </View>
-                {!requestRefresh && 
+                {((!requestRefresh) && modalMode === "confirmation") && 
                 <FlatList
                   data={medicineData}
                   renderItem={renderMedicineEntry}
@@ -582,24 +579,27 @@ export default function MedicinePicker({ route }) {
             <View>
               <Text style={[styles.normalText, {fontSize: 14}]}>Daftar Resep Obat</Text>
               {fields.length > 0 && (
-              <View style={[styles.medicineSelectedListWrapper, {maxHeight: 180, paddingBlockStart: 20}]}>
-                <FlatList
-                  data={fields}
-                  renderItem={renderMedicineCartEntry}
-                  keyExtractor={(item) => item.formId}
-                  showsVerticalScrollIndicator={true}
-                />
-              </View>
+                <View style={[styles.medicineSelectedListWrapper, {maxHeight: 180, paddingBlockStart: 20}]}>
+                  <FlatList
+                    data={fields}
+                    renderItem={renderMedicineCartEntry}
+                    keyExtractor={(item) => item.formId}
+                    showsVerticalScrollIndicator={true}
+                  />
+                </View>
               )}
             </View>
-            <Pressable 
-              style={[styles.saveButton]}
-              onPress={() => {setModalVisible(true)}}
-            >
-              <Text style={[styles.medText, { fontSize: 14, color: "#fff" }]}>
-                Simpan
-              </Text>
-            </Pressable>
+            
+            {fields.length > 0 && (
+              <Pressable 
+                style={[styles.saveButton]}
+                onPress={() => {setModalVisible(true)}}
+              >
+                <Text style={[styles.medText, { fontSize: 14, color: "#fff" }]}>
+                  Simpan
+                </Text>
+              </Pressable>
+            )}
           </View>
 
         </View>
