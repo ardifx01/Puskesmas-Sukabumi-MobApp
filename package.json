@@ -9,7 +9,6 @@
     "web": "expo start --web"
   },
   "dependencies": {
-    "@config-plugins/repo": "expo/config-plugins",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-community/datetimepicker": "8.4.1",
     "@react-native-picker/picker": "2.11.1",
@@ -44,17 +43,5 @@
   "devDependencies": {
     "@babel/core": "^7.28.3"
   },
-  "private": true,
-  "expo": {
-    "doctor": {
-      "reactNativeDirectoryCheck": {
-        "enabled": true,
-        "exclude": [
-          "react-native-extra-dimensions-android",
-          "react-native-keyboard-aware-scroll-view"
-        ],
-        "listUnknownPackages": false
-      }
-    }
-  }
+  "private": true
 }
