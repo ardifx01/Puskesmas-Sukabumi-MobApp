@@ -9,26 +9,27 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@config-plugins/repo": "expo/config-plugins",
     "@expo/vector-icons": "^14.1.0",
     "@react-native-community/datetimepicker": "8.4.1",
     "@react-native-picker/picker": "2.11.1",
-    "@react-navigation/bottom-tabs": "^7.4.6",
-    "@react-navigation/native": "^7.1.17",
-    "@react-navigation/native-stack": "^7.3.25",
+    "@react-navigation/bottom-tabs": "^7.3.10",
+    "@react-navigation/native": "^7.1.6",
+    "@react-navigation/native-stack": "^7.3.10",
     "axios": "^1.11.0",
     "expo": "^53.0.22",
-    "expo-cli": "^6.3.10",
+    "expo-constants": "^17.1.7",
     "expo-font": "~13.3.2",
     "expo-linear-gradient": "~14.1.5",
-    "expo-router": "~5.1.4",
+    "expo-linking": "^7.1.7",
+    "expo-router": "~5.1.5",
     "expo-secure-store": "~14.2.4",
     "expo-status-bar": "~2.2.3",
     "expo-svg-uri": "^2.0.0",
-    "expo-system-ui": "~5.0.10",
-    "install-expo-modules": "^0.12.8",
+    "expo-system-ui": "~5.0.11",
     "react": "19.0.0",
     "react-hook-form": "^7.62.0",
-    "react-native": "0.79.6",
+    "react-native": "0.79.5",
     "react-native-collapsible": "^1.6.2",
     "react-native-extra-dimensions-android": "^1.2.5",
     "react-native-gesture-handler": "~2.24.0",
@@ -43,5 +44,17 @@
   "devDependencies": {
     "@babel/core": "^7.28.3"
   },
-  "private": true
+  "private": true,
+  "expo": {
+    "doctor": {
+      "reactNativeDirectoryCheck": {
+        "enabled": true,
+        "exclude": [
+          "react-native-extra-dimensions-android",
+          "react-native-keyboard-aware-scroll-view"
+        ],
+        "listUnknownPackages": false
+      }
+    }
+  }
 }
