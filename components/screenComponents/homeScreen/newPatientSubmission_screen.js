@@ -10,6 +10,7 @@ import {
   Pressable,
   TouchableOpacity,
   ScrollView, Button,
+  Alert
 } from "react-native";
 import { RadioButton } from "react-native-paper";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -25,7 +26,7 @@ import { LinearGradient } from "expo-linear-gradient";
 
 import UseIcons from "../../middleware/tools/useIcons";
 import { API_URL } from "../../middleware/context/authContext";
-import { goBack } from "expo-router/build/global-state/routing";
+import calculateAge from "../../middleware/tools/calculateAge";
 
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -65,7 +66,6 @@ export default function NewPatientScreen({ route }) {
     formState: { errors },
   } = useForm({
     defaultValues: {
-      nomor_rm: "",
       nama_lengkap: "",
       nik: "",
       jenis_kelamin: "",
@@ -86,20 +86,27 @@ export default function NewPatientScreen({ route }) {
   const onSubmit = (data) => {
     console.log("From onSubmit", data);
 
+    console.log("Raw Birthdate: ", data.tanggal_lahir);
     const birthDate = new Date(data.tanggal_lahir);
+    console.log("Birtdate generated: ", birthDate);
     const today = new Date();
-    const age = today.getFullYear() - birthDate.getFullYear();
-    const monthDiff = today.getMonth() - birthDate.getMonth();
-    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-      age--;
-    }
+    console.log("Today date generated: ", today);
 
-
-    data.umur = age;
+    data.umur = calculateAge(birthDate, today);
     data.tanggal_lahir = birthDate.toLocaleDateString("sv-SE");
+    console.log("From onSubmit + Age", data);
 
     setFormData(data);
   };
+
+  useEffect(() => {
+    if(formData) {
+      console.log("Data from Form Data: ", formData);
+    } else {
+      console.log ("Form Data is null !");
+    };
+  }, [formData]);
+
   useEffect(() => {
     const submitForm = async() => {
       if(formData){
@@ -107,8 +114,24 @@ export default function NewPatientScreen({ route }) {
         console.log("Processing to upload....");
         const response = await axios.post(`${API_URL}/${ENDPOINT_URL}`, formData);
         console.log("Succesfully Uploaded, Response Data: ", response.data);
-        alert("Upload Data Success");
-        navigation.goBack();
+        Alert.alert(
+          "Upload Data Success !", // Judul alert
+          "Penambahan pasien baru sukses ditambahkan !", // Pesan
+          [
+            {
+              text: "OK",
+              onPress: () => {
+                navigation.navigate("medicine-picker",
+                                  {
+                                    patientId: response.data.data.id,
+                                    fromScreen: "patient-submission"
+                                  }
+                );
+              },
+            },
+          ],
+          { cancelable: false }
+        );
       }
     };
     submitForm();
@@ -158,33 +181,6 @@ export default function NewPatientScreen({ route }) {
           >
             <View>
               <View style={[{ gap: 20 }]}>
-                <View>
-                  <Text style={styles.formTextTitle}>Nomor RM</Text>
-                  <View style={styles.form}>
-                    <View style={[styles.formInput, { height: 49 }]}>
-                      <Controller
-                        control={control}
-                        rules={{
-                          required: true,
-                        }}
-                        render={({ field: { onChange, onBlur, value } }) => (
-                          <TextInput
-                            placeholder="Harap diisi !"
-                            onBlur={onBlur}
-                            onChangeText={onChange}
-                            value={value}
-                          />
-                        )}
-                        name="nomor_rm"
-                      />
-                      {errors.nomor_rm && (
-                        <Text style={styles.errorTextInput}>
-                          Mohon masukkan NIK pasien!
-                        </Text>
-                      )}
-                    </View>
-                  </View>
-                </View>
                 <View>
                   <Text style={styles.formTextTitle}>Nama Pasien</Text>
                   <View style={styles.form}>
