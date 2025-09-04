@@ -32,11 +32,18 @@
     "plugins": [
       "expo-router",
       "expo-font",
-      ["expo-secure-store",
-      {
-        "faceIDPermission":"Allow $(PRODUCT_NAME) to use Face ID for authentication"
-      }
+      [
+        "expo-secure-store",
+        {
+          "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID for authentication"
+        }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "4372e06f-25c9-441a-9bb8-5736c5fbc93d"
+      }
+    }
   }
 }
