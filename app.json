@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "Puskesmas-Sukabumi-MobApp",
-    "slug": "Puskesmas-Sukabumi-MobApp",
-    "version": "1.0.0",
+    "name": "Puskesmas Sukabumi",
+    "slug": "Puskesmas-Sukabumi",
+    "version": "1.0.105",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -10,7 +10,7 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#4ACDD1"
     },
     "ios": {
       "supportsTablet": true,
@@ -24,7 +24,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.anonymous.PuskesmasSukabumiMobApp"
+      "package": "com.MicrodataIndonesia.PuskesmasSukabumi"
     },
     "web": {
       "favicon": "./assets/favicon.png"
