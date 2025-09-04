@@ -12,6 +12,7 @@ import {
   TouchableOpacity,
   FlatList,
 } from "react-native";
+import { useIsFocused } from '@react-navigation/native';
 
 
 import { useNavigation } from "expo-router";
@@ -21,12 +22,22 @@ import { StatusBar } from "expo-status-bar";
 import UseIcons from "./middleware/tools/useIcons";
 import { useAuth } from "./middleware/context/authContext";
 
-const windowWidth = Dimensions.get("window").width;
-const windowHeight = Dimensions.get("window").height;
+
 
 export default function ProfileScreen({ route }) {
   const insets = useSafeAreaInsets();
+  const isFocused = useIsFocused();
   const { authData, onLogout } = useAuth();
+  const [windowWidth, setWindowWidth] = useState();
+  const [windowHeight, setWindowHeight] = useState();
+  useEffect(() => {
+    if(isFocused){
+      const windowWidth = Dimensions.get("window").width;
+      const windowHeight = Dimensions.get("window").height;
+      setWindowWidth(windowWidth);
+      setWindowHeight(windowHeight);
+    }
+  }, [isFocused])
   const navigation = useNavigation();
   const handleLogout = async() => {
     console.log("Logout Handler Pressed !");
@@ -41,10 +52,10 @@ export default function ProfileScreen({ route }) {
   return (
     <ImageBackground
       source={require("../assets/img_bg_potrait.png")}
-      style={styles.bgContainer}
+      style={[styles.bgContainer, { height: windowHeight, width: windowWidth,}]}
     >
       <SafeAreaView style={[{flex: 1}]}>
-        <View style={[styles.container, {flex: 1, backgroundColor: ""}]}>
+        <View style={[styles.container, {flex: 1, backgroundColor: "", height: windowHeight,}]}>
           <View style={[styles.upperContent, styles.contentContainer]}>
             <View style={styles.headerContainer}>
               <Pressable style={[styles.actionCircleButton]} onPress={() => navigation.goBack()}>
@@ -125,8 +136,6 @@ export default function ProfileScreen({ route }) {
 
 const styles = StyleSheet.create({
   bgContainer: {
-    height: windowHeight,
-    width: windowWidth,
     resizeMode: "cover",
     // overflow: "hidden",
     backgroundColor: "#F7F9FC",
@@ -134,7 +143,7 @@ const styles = StyleSheet.create({
   container: {
     // alignItems: "center",
     // justifyContent: "center",
-    height: windowHeight,
+    
     paddingTop: 19,
   },
   contentContainer: {
