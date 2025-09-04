@@ -16,6 +16,7 @@ import {
 } from "react-native";
 import Collapsible from "react-native-collapsible";
 import { FlatList } from "react-native-gesture-handler";
+import { useIsFocused } from '@react-navigation/native';
 import axios from "axios";
 
 
@@ -33,9 +34,10 @@ const ENDPOINT_URL = "patient/getHistory";
 
 
 // Component for Accordion
-const AccordionItem = React.memo(({ title, initialCollapsed = true }) => {
+const AccordionItem = React.memo(({ title, dataObat, initialCollapsed = true }) => {
   const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index}` }));
   const [isCollapsed, setIsCollapsed] = useState(initialCollapsed);
+  // console.log("Data Resep Obat: ", dataObat);
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed);
@@ -45,19 +47,19 @@ const AccordionItem = React.memo(({ title, initialCollapsed = true }) => {
     return (
     <View style={styles.obatItem}>
       <View>
-        <Text style={[styles.normalText, { fontSize: 20 }]}>Paracetamol</Text>
+        <Text style={[styles.normalText, { fontSize: 20 }]}>{item.nama}</Text>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
           <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
-          <Text style={[styles.normalText, { fontSize: 16 }]}>Kapsul</Text>
+          <Text style={[styles.normalText, { fontSize: 16 }]}>{item.satuan}</Text>
           <Text style={{ fontSize: 20, marginInline: 3.5 }}>•</Text>
           <Text style={[styles.normalText, { fontSize: 16 }]}>
-            Antibiotik
+            {item.jenis}
           </Text>
         </View>
       </View>
 
       <Text style={[styles.normalText, { fontSize: 20, color: "#616161" }]}>
-        2
+        {item.jumlah}
       </Text>
     </View>
     );
@@ -81,12 +83,12 @@ const AccordionItem = React.memo(({ title, initialCollapsed = true }) => {
         />
       </Pressable>
 
-      <Collapsible collapsed={isCollapsed}>
+      <Collapsible collapsed={isCollapsed} enablePointerEvents={false}>
         <View style={[styles.itemContent]}>
           <FlatList
-            data={dummyArray} // Data Source
+            data={dataObat} // Data Source
             renderItem={renderObatItem}
-            keyExtractor={(item) => item.id}
+            keyExtractor={(item, index) => `obat-${item.id}-${index}`}
             // Properti untuk mengontrol performa FlatList
             initialNumToRender={3} // Jumlah item awal yang dirender
             showsVerticalScrollIndicator={true} // Sembunyikan scroll indicator jika tidak diinginkan
@@ -99,7 +101,7 @@ const AccordionItem = React.memo(({ title, initialCollapsed = true }) => {
 });
 
 // Component for History List
-const HistoryList = React.memo(({item}) => (
+const HistoryList = React.memo(({item, patientDataId, navigation}) => (
   <View style={[styles.detailData]}>
     <View
       style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
@@ -119,10 +121,11 @@ const HistoryList = React.memo(({item}) => (
     </View>
 
     <FlatList
+      nestedScrollEnabled
       data={item.riwayatPemeriksaan} // Data Source
       renderItem={({item: dataPemeriksaan}) => (
         <View style={{ borderTopWidth: 1, borderColor: "#EDEDED", paddingBlockStart: 10 }}>
-          <Text style={[styles.italicText, { fontSize: 14, color: "#606060"}]}>Nomor Pemeriksaan : #{dataPemeriksaan.id}</Text>
+          <Text style={[styles.italicText, { fontSize: 14, color: "#606060"}]}>Nomor Pemeriksaan : #{dataPemeriksaan.id_pemeriksaan}</Text>
           <View style={{ gap: 8 }}>
             <Text style={[styles.normalText, { fontSize: 18 }]}>
               Keluhan :<Text style={[styles.medText]}> {dataPemeriksaan.keluhan}</Text>
@@ -131,30 +134,65 @@ const HistoryList = React.memo(({item}) => (
               Diagnosa :<Text style={[styles.medText]}> {dataPemeriksaan.diagnosa}</Text>
             </Text>
           </View>
-          <AccordionItem
-            title="Daftar Resep Obat"
-          />
+          {dataPemeriksaan.resep_obat ? (
+            <AccordionItem
+              title="Daftar Resep Obat"
+              dataObat = {dataPemeriksaan.resep_obat}
+            />
+          ) : (
+              <Pressable
+                style={[
+                  styles.actionButton,
+                  {
+                    flexDirection: "row",
+                    alignItems: "center",
+                    backgroundColor: "#4ACDD1",
+                    marginBlockStart: 10,
+                  },
+                ]}
+                onPress={() => navigation.navigate("medicine-picker", 
+                                {
+                                  patientId: dataPemeriksaan.id_pemeriksaan,
+                                  fromScreen: "detail-patient"
+                                }
+                              )
+                }
+              >
+                <View
+                  style={[
+                    { flex: 2, flexDirection: "row", alignItems: "center" },
+                  ]}
+                >
+                  <Text
+                    style={[
+                      styles.medText,
+                      { color: "#fff", fontSize: 18 },
+                    ]}
+                  >
+                    Pilih Obat
+                  </Text>
+                </View>
+                <UseIcons
+                  name="angle-right"
+                  set="FontAwesome"
+                  size={30}
+                  color="#fff"
+                  style={{paddingEnd:9}}
+                />
+ 
+              </Pressable>
+          )
+          }
+
         </View>
 
       )}
-      keyExtractor={(dataPemeriksaan) => dataPemeriksaan.id}
+      keyExtractor={(dataPemeriksaan, index) => `riwayat-${dataPemeriksaan.id}-${index}`}
       // Properti untuk mengontrol performa FlatList
       initialNumToRender={3} // Jumlah item awal yang dirender
       showsVerticalScrollIndicator={true} // Sembunyikan scroll indicator jika tidak diinginkan
       contentContainerStyle={{gap: 35}}
     />
-    {/* <View style={{ gap: 8 }}>
-      <Text style={[styles.normalText, { fontSize: 18 }]}>
-        Pemeriksa :<Text style={[styles.medText]}> Dr. Keqing</Text>
-      </Text>
-      <Text style={[styles.normalText, { fontSize: 18 }]}>
-        Keluhan :<Text style={[styles.medText]}> Demam, Pilek</Text>
-      </Text>
-      <Text style={[styles.normalText, { fontSize: 18 }]}>
-        Diagnosa :<Text style={[styles.medText]}> TBC</Text>
-      </Text>
-    </View> */}
-
 
   </View>
 ));
@@ -162,9 +200,9 @@ const HistoryList = React.memo(({item}) => (
 // Default export
 export default function DetailPatientScreen({ route }) {
   const authData = useAuth();
+  const isFocused = useIsFocused();
   const patientData = route.params;
-  console.log("Patient Data: ", patientData);
-  const dummyArray = Array(10).fill(null).map((_, index) => ({ id: `${index}` }));
+  // console.log("Patient Data: ", patientData);
   const [patientHistory, setPatientHistory] = useState();
 
   const navigation = useNavigation();
@@ -172,38 +210,31 @@ export default function DetailPatientScreen({ route }) {
   useEffect(() => {
     const fetchPatientHistoryData = async() => {
       try {
-        const response = await axios.get(`${API_URL}/patient/show`)
-        const getPatientData = response.data.data.filter(
-          item => item.nama_lengkap.toLowerCase().includes(patientData.nama_lengkap.toLowerCase())
-        );
-        const groupPatientDataByDate = getPatientData.reduce((accumulator, item) => {
-          const date = item.created_at.split("T")[0];
-          if(!accumulator[date]) {
-            accumulator[date] = [];
-          }
-          accumulator[date].push(item);
-          return accumulator;
-        }, {});
-        const transformToArray = Object.keys(groupPatientDataByDate).map(tanggal => ({
-          tanggal,
-          riwayatPemeriksaan: groupPatientDataByDate[tanggal]
-        }));
-        console.log('Grouped Data by Date',transformToArray);
-        setPatientHistory(transformToArray);
+        const response = await axios.get(`${API_URL}/patient/getHistory`,
+                        {
+                          params: {
+                            patientId: patientData.id,
+                          }
+                        }
+        )
+        setPatientHistory(response.data.data);
       } catch (error) {
         console.log ("There is an Error while fetching Patient History Data, ", error);
       }
     };
-    fetchPatientHistoryData();
-  }, []);
+    if(isFocused) {
+      fetchPatientHistoryData();
+    };
+  }, [isFocused]);
 
-  useEffect(() => {
-    console.log("Patient Data History: ", patientHistory);
-  }, [patientHistory]);
+  // Logging for Patient Data that already fetched
+  // useEffect(() => { 
+  //   console.log("Patient Data History: ", patientHistory);
+  // }, [patientHistory]);
 
   const renderDataHistory = ({item}) => {
     return (
-      <HistoryList item={item}/>
+      <HistoryList item={item} patientDataId={patientData.id} navigation={navigation}/>
     );
   };
 
@@ -239,7 +270,8 @@ export default function DetailPatientScreen({ route }) {
         <View style={[styles.lowerContent]}>
           <View style={{ marginBlockEnd: 16 }}>
             <Text style={[styles.medText, { fontSize: 24 }]}>
-              {patientData.nama_lengkap}
+              {patientData.nama_lengkap}  
+              <Text style={[styles.normalText,{ fontSize: 20 }]}>{` (${patientData.nomor_rm})`}</Text>
             </Text>
             <View style={[{ flexDirection: "row", alignItems: "center" }]}>
               <Text style={[styles.normalText, { fontSize: 16 }]}>
@@ -260,6 +292,7 @@ export default function DetailPatientScreen({ route }) {
               maxToRenderPerBatch={15}
               updateCellsBatchingPeriod={7}
               windowSize={21}
+              nestedScrollEnabled
             />
 
           </View>
@@ -362,4 +395,10 @@ const styles = StyleSheet.create({
     borderBottomWidth: 0.5,
     borderBottomColor: "#78797A80",
   },
+  actionButton: {
+    paddingInline: 24,
+    paddingBlock: 8,
+    borderRadius: 14,
+  },
+
 });
