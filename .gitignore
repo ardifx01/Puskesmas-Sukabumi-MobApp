@@ -43,3 +43,4 @@ bun.lock
 android/
 credentials.json
 eas.json
+/output
