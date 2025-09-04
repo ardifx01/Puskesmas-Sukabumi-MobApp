@@ -32,6 +32,7 @@ yarn-error.*
 
 # local env files
 .env*.local
+/dummyData
 
 # typescript
 *.tsbuildinfo
@@ -41,6 +42,9 @@ bun.lock
 
 #android
 android/
+
+#eas-build
 credentials.json
 eas.json
 /output
+
