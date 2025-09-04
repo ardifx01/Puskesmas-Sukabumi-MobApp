@@ -4,7 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const TOKEN_KEY = 'userToken';
 const USER_DATA = 'userData';
-export const API_URL = ' https://capable-premium-filly.ngrok-free.app/api';
+export const API_URL = 'https://mobile.puskesmassukabumi.com/api';
 
 const AuthContext = createContext({});
 
